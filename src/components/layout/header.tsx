@@ -6,7 +6,7 @@ export function Header() {
     <header className="border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-2xl font-bold text-red-600">
-          JumpSquare
+          Jumpsquare
         </Link>
         <nav className="flex items-center space-x-4">
           <Link href="/" className="hover:text-red-600 transition-colors">
