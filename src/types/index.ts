@@ -6,9 +6,21 @@ export interface Movie {
   rating: string;
   jumpscare_count: number;
   poster_url?: string;
-  description: string;
-  created_at: string;
-  updated_at: string;
+  description?: string;
+  runtime_minutes?: number;
+  directors?: Director[]; // populated from join
+}
+
+export interface Director {
+  id: string;
+  name: string;
+  bio?: string;
+}
+
+export interface MovieDirector {
+  id: string;
+  movie_id: string;
+  director_id: string;
 }
 
 export interface Jumpscare {
@@ -16,12 +28,10 @@ export interface Jumpscare {
   movie_id: string;
   timestamp_minutes: number;
   timestamp_seconds: number;
-  timestamp_millis: number;
+  timestamp_millis: number; // 0-999 milliseconds
   intensity: number; // 1-10
   description: string;
   category: "major" | "minor" | "false_alarm";
-  created_at: string;
-  updated_at: string;
 }
 
 export function formatTimestamp(

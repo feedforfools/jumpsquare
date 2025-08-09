@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { mockMovies, getJumpscaresByMovieId } from "@/data/mock-data";
-import { ArrowLeft, Calendar, Zap, Users } from "lucide-react";
+import { ArrowLeft, Calendar, Zap, Users, User, Clock } from "lucide-react";
 
 export default function MovieDetailPage() {
   const params = useParams();
@@ -76,14 +76,32 @@ export default function MovieDetailPage() {
               <div className="flex-1">
                 <h1 className="text-4xl font-bold mb-4">{movie.title}</h1>
 
-                <div className="flex flex-wrap items-center gap-4 mb-6">
+                <div className="flex flex-wrap items-center gap-4 mb-4">
                   <div className="flex items-center space-x-2">
                     <Calendar className="h-4 w-4 text-gray-500" />
                     <span>{movie.year}</span>
                   </div>
                   <Badge variant="outline">{movie.rating}</Badge>
                   <Badge variant="secondary">{movie.genre}</Badge>
+                  {movie.runtime_minutes && (
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4 text-gray-500" />
+                      <span>{movie.runtime_minutes} minutes</span>
+                    </div>
+                  )}
                 </div>
+
+                {movie.directors && movie.directors.length > 0 && (
+                  <div className="mb-4">
+                    <div className="flex items-center space-x-2 text-gray-700">
+                      <User className="h-4 w-4" />
+                      <span className="font-medium">
+                        Directed by{" "}
+                        {movie.directors.map((d) => d.name).join(", ")}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {movie.description && (
                   <p className="text-lg text-gray-700 mb-6 leading-relaxed">
