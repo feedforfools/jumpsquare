@@ -34,4 +34,17 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
   }
+  
+  @keyframes breathing {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.5);
+    }
+  }
+  
+  .animate-breathing {
+    animation: breathing 0.8s ease-in-out infinite;
+  }
 }

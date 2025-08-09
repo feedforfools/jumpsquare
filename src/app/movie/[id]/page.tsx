@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ComingSoon } from "@/components/ui/coming-soon";
 import { getMovieById, getJumpscaresByMovieId } from "@/lib/database";
 import { Movie, Jumpscare } from "@/types";
 import {
@@ -217,9 +218,15 @@ export default function MovieDetailPage() {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">Jumpscare Timeline</h2>
-              <Button variant="outline" size="sm">
-                Export as SRT
-              </Button>
+              <ComingSoon
+                position="bottom-right"
+                badgeColor="bg-gradient-to-r from-blue-500 to-cyan-500"
+                tilt={3}
+              >
+                <Button variant="outline" size="sm">
+                  Export as SRT
+                </Button>
+              </ComingSoon>
             </div>
 
             <JumpscareTable jumpscares={jumpscares} />
@@ -227,12 +234,30 @@ export default function MovieDetailPage() {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4">
-            <Button>Report Issue</Button>
-            <Button variant="outline">Suggest Edit</Button>
-            <Button variant="outline">
-              <Users className="h-4 w-4 mr-2" />
-              Rate This Data
-            </Button>
+            {/* <ComingSoon
+              position="top-right"
+              badgeColor="bg-gradient-to-r from-yellow-500 to-amber-500"
+            >
+              <Button>Report Issue</Button>
+            </ComingSoon> */}
+
+            <ComingSoon
+              position="top-left"
+              badgeColor="bg-gradient-to-r from-green-500 to-emerald-500"
+              tilt={-7}
+            >
+              <Button variant="outline">Suggest Edit</Button>
+            </ComingSoon>
+
+            {/* <ComingSoon
+              position="top-right"
+              badgeColor="bg-gradient-to-r from-purple-500 to-pink-500"
+            >
+              <Button variant="outline">
+                <Users className="h-4 w-4 mr-2" />
+                Rate This Data
+              </Button>
+            </ComingSoon> */}
           </div>
         </div>
       </main>
@@ -241,3 +266,13 @@ export default function MovieDetailPage() {
     </div>
   );
 }
+
+// So I would like to refine a little bit the UI of this project.
+
+// Only minor things but a moderate amount, could you please handle them providing the code necessary to do them?
+
+// 1. I need to disable any buttons that are now not being used yet, maybe adding something subtle to enforce that those buttons and functionalities are "coming soon"; this will include most definitely the Submit Movie button in the header, the Suggest Edit button, the Report Issue button, the Rate this Data button, the Export as SRT button. (Do you think it's a good idea or is it better to have them removed completely?)
+// 2. I would probably need a separate page for preventing the scraping of the content I will add in the future, not sure how to do that and what to write, but basically what I would love to is to prevent other people to "legally" scrape all the simple data I show in my website. Just for you know, the original website I'm taking the data from has no such a page and I took all the data with a scraper bot knowing that I will not face any legal consequences because these data cannot be copyrighted and most importantly there was no usage terms to oblige to.
+// 3. We should remove the Movies button in the header because with the main logo user can go back to homepage already
+// 4. I would love to make the homepage "hero" section with search bar more appealing. Nothing too fancy, but improving a bit on the current thing could be beneficial.
+// 5. I think we should limit the number of movies shown in the homepage by paginating them maybe? (which also would improve the DB access I suppose, considering that in the future we will have a lot of movies in my DB and not just 15 mock entries) Such that the vertical space that the homepage is taking in the browser window is a little bit more contained and the footer is always visible.

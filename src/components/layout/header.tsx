@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ComingSoon } from "@/components/ui/coming-soon";
 
 export function Header() {
   return (
@@ -9,12 +10,14 @@ export function Header() {
           Jumpsquare
         </Link>
         <nav className="flex items-center space-x-4">
-          <Link href="/" className="hover:text-red-600 transition-colors">
-            Movies
-          </Link>
-          <Button variant="outline" size="sm">
-            Submit Movie
-          </Button>
+          <ComingSoon
+            position="top-right"
+            badgeColor="bg-gradient-to-r from-red-500 to-orange-500"
+          >
+            <Button variant="outline" size="sm">
+              Submit Movie
+            </Button>
+          </ComingSoon>
         </nav>
       </div>
     </header>
