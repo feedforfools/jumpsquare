@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { JumpscareTable } from "@/components/jumpscare-table";
@@ -8,27 +9,87 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { mockMovies, getJumpscaresByMovieId } from "@/data/mock-data";
-import { ArrowLeft, Calendar, Zap, Users, User, Clock } from "lucide-react";
+import { getMovieById, getJumpscaresByMovieId } from "@/lib/database";
+import { Movie, Jumpscare } from "@/types";
+import {
+  ArrowLeft,
+  Calendar,
+  Zap,
+  Users,
+  User,
+  Clock,
+  Loader2,
+} from "lucide-react";
 
 export default function MovieDetailPage() {
   const params = useParams();
   const router = useRouter();
   const movieId = params.id as string;
 
-  const movie = mockMovies.find((m) => m.id === movieId);
-  const jumpscares = getJumpscaresByMovieId(movieId);
+  const [movie, setMovie] = useState<Movie | null>(null);
+  const [jumpscares, setJumpscares] = useState<Jumpscare[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!movie) {
+  useEffect(() => {
+    const loadMovieData = async () => {
+      if (!movieId) return;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const [movieData, jumpscareData] = await Promise.all([
+          getMovieById(movieId),
+          getJumpscaresByMovieId(movieId),
+        ]);
+
+        if (!movieData) {
+          setError("Movie not found");
+          return;
+        }
+
+        setMovie(movieData);
+        setJumpscares(jumpscareData);
+      } catch (err) {
+        console.error("Error loading movie data:", err);
+        setError("Failed to load movie data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMovieData();
+  }, [movieId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 container mx-auto px-4 py-12">
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+            <span className="ml-2 text-gray-600">Loading movie details...</span>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !movie) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 container mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Movie Not Found</h1>
+            <h1 className="text-2xl font-bold mb-4">
+              {error || "Movie Not Found"}
+            </h1>
             <p className="text-gray-600 mb-8">
-              The movie you&apos;re looking for doesn&apos;t exist in our
-              database.
+              {error === "Movie not found"
+                ? "The movie you're looking for doesn't exist in our database."
+                : "Something went wrong while loading the movie data."}
             </p>
             <Button onClick={() => router.push("/")}>
               <ArrowLeft className="h-4 w-4 mr-2" />

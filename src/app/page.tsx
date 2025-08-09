@@ -1,26 +1,53 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { SearchBar } from "@/components/search-bar";
 import { MovieGrid } from "@/components/movie-grid";
-import { mockMovies } from "@/data/mock-data";
+import { getMovies, searchMovies } from "@/lib/database";
+import { Movie } from "@/types";
+import { Loader2 } from "lucide-react";
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
 
-  const filteredMovies = useMemo(() => {
-    if (!searchQuery.trim()) return mockMovies;
+  // Load all movies on initial render
+  useEffect(() => {
+    const loadMovies = async () => {
+      setLoading(true);
+      try {
+        const allMovies = await getMovies();
+        setMovies(allMovies);
+      } catch (error) {
+        console.error("Failed to load movies:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const query = searchQuery.toLowerCase();
-    return mockMovies.filter(
-      (movie) =>
-        movie.title.toLowerCase().includes(query) ||
-        movie.genre.toLowerCase().includes(query) ||
-        movie.year.toString().includes(query)
-    );
-  }, [searchQuery]);
+    loadMovies();
+  }, []);
+
+  // Handle search
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    setSearching(true);
+
+    try {
+      const results = await searchMovies(query);
+      setMovies(results);
+    } catch (error) {
+      console.error("Search failed:", error);
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const isLoadingState = loading || searching;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -40,7 +67,7 @@ export default function HomePage() {
             </p>
             <div className="flex justify-center">
               <SearchBar
-                onSearch={setSearchQuery}
+                onSearch={handleSearch}
                 placeholder="Search for a movie..."
               />
             </div>
@@ -57,12 +84,24 @@ export default function HomePage() {
                   : "Featured Movies"}
               </h2>
               <div className="text-sm text-gray-600">
-                {filteredMovies.length} movie
-                {filteredMovies.length !== 1 ? "s" : ""} found
+                {!isLoadingState && (
+                  <>
+                    {movies.length} movie{movies.length !== 1 ? "s" : ""} found
+                  </>
+                )}
               </div>
             </div>
 
-            <MovieGrid movies={filteredMovies} />
+            {isLoadingState ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+                <span className="ml-2 text-gray-600">
+                  {loading ? "Loading movies..." : "Searching..."}
+                </span>
+              </div>
+            ) : (
+              <MovieGrid movies={movies} />
+            )}
           </div>
         </section>
       </main>

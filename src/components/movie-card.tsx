@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Movie } from "@/types";
-import { Zap } from "lucide-react";
+import { Clock, Zap, User } from "lucide-react";
 
 interface MovieCardProps {
   movie: Movie;
@@ -37,7 +37,22 @@ export function MovieCard({ movie }: MovieCardProps) {
             <span>{movie.year}</span>
             <span>•</span>
             <span>{movie.genre}</span>
+            {movie.runtime_minutes && (
+              <>
+                <span>•</span>
+                <div className="flex items-center space-x-1">
+                  <Clock className="h-3 w-3" />
+                  <span>{movie.runtime_minutes}m</span>
+                </div>
+              </>
+            )}
           </div>
+          {movie.directors && movie.directors.length > 0 && (
+            <div className="flex items-center space-x-1 text-sm text-gray-600">
+              <User className="h-3 w-3" />
+              <span>{movie.directors.map((d) => d.name).join(", ")}</span>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between mb-3">

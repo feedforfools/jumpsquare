@@ -7,7 +7,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Jumpscare, formatTimestamp } from "@/types";
+import { Jumpscare } from "@/types";
+import { formatTimestamp } from "@/lib/database";
 import { Zap, Clock, AlertTriangle } from "lucide-react";
 
 interface JumpscareTableProps {
