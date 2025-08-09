@@ -58,12 +58,12 @@ export default function HomePage() {
         <section className="bg-gradient-to-b from-red-50 to-white py-12">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl font-bold mb-4">
-              Know When the <span className="text-red-600">Scares</span> Are
+              Know When the <span className="text-red-600">Jumps</span> Are
               Coming
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               The ultimate database of movie jumpscares. Watch horror movies
-              with confidence or avoid the scares entirely.
+              with confidence or avoid the jumps entirely.
             </p>
             <div className="flex justify-center">
               <SearchBar
