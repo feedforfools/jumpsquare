@@ -5,7 +5,12 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { SearchBar } from "@/components/search-bar";
 import { MovieGrid } from "@/components/movie-grid";
-import { getMovies, searchMovies } from "@/lib/database";
+import { Pagination } from "@/components/pagination";
+import {
+  getMovies,
+  searchMovies,
+  PaginatedMoviesResponse,
+} from "@/lib/database";
 import { Movie } from "@/types";
 import { Loader2 } from "lucide-react";
 
@@ -14,14 +19,19 @@ export default function HomePage() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
-  // Load all movies on initial render
+  // Load movies for current page
   useEffect(() => {
     const loadMovies = async () => {
       setLoading(true);
       try {
-        const allMovies = await getMovies();
-        setMovies(allMovies);
+        const response: PaginatedMoviesResponse = await getMovies(currentPage);
+        setMovies(response.movies);
+        setTotalPages(response.totalPages);
+        setTotalCount(response.totalCount);
       } catch (error) {
         console.error("Failed to load movies:", error);
       } finally {
@@ -29,21 +39,60 @@ export default function HomePage() {
       }
     };
 
-    loadMovies();
-  }, []);
+    // Only load if there's no search query
+    if (!searchQuery) {
+      loadMovies();
+    }
+  }, [currentPage, searchQuery]);
 
   // Handle search
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
     setSearching(true);
+    setCurrentPage(1); // Reset to first page on new search
 
     try {
-      const results = await searchMovies(query);
-      setMovies(results);
+      const response: PaginatedMoviesResponse = await searchMovies(query, 1);
+      setMovies(response.movies);
+      setTotalPages(response.totalPages);
+      setTotalCount(response.totalCount);
     } catch (error) {
       console.error("Search failed:", error);
     } finally {
       setSearching(false);
+    }
+  };
+
+  // Handle search pagination
+  useEffect(() => {
+    const performSearch = async () => {
+      if (searchQuery && currentPage > 1) {
+        setSearching(true);
+        try {
+          const response: PaginatedMoviesResponse = await searchMovies(
+            searchQuery,
+            currentPage
+          );
+          setMovies(response.movies);
+          setTotalPages(response.totalPages);
+          setTotalCount(response.totalCount);
+        } catch (error) {
+          console.error("Search pagination failed:", error);
+        } finally {
+          setSearching(false);
+        }
+      }
+    };
+
+    performSearch();
+  }, [currentPage, searchQuery]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of movies section
+    const moviesSection = document.getElementById("movies-section");
+    if (moviesSection) {
+      moviesSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -75,7 +124,7 @@ export default function HomePage() {
         </section>
 
         {/* Movies Section */}
-        <section className="py-12">
+        <section id="movies-section" className="py-12">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold">
@@ -86,7 +135,12 @@ export default function HomePage() {
               <div className="text-sm text-gray-600">
                 {!isLoadingState && (
                   <>
-                    {movies.length} movie{movies.length !== 1 ? "s" : ""} found
+                    {totalCount} movie{totalCount !== 1 ? "s" : ""} found
+                    {totalPages > 1 && (
+                      <span className="ml-2">
+                        • Page {currentPage} of {totalPages}
+                      </span>
+                    )}
                   </>
                 )}
               </div>
@@ -100,7 +154,19 @@ export default function HomePage() {
                 </span>
               </div>
             ) : (
-              <MovieGrid movies={movies} />
+              <>
+                <MovieGrid movies={movies} />
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    className="mt-8"
+                  />
+                )}
+              </>
             )}
           </div>
         </section>

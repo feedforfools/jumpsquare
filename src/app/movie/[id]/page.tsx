@@ -12,15 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { ComingSoon } from "@/components/ui/coming-soon";
 import { getMovieById, getJumpscaresByMovieId } from "@/lib/database";
 import { Movie, Jumpscare } from "@/types";
-import {
-  ArrowLeft,
-  Calendar,
-  Zap,
-  Users,
-  User,
-  Clock,
-  Loader2,
-} from "lucide-react";
+import { ArrowLeft, Calendar, Zap, User, Clock, Loader2 } from "lucide-react";
 
 export default function MovieDetailPage() {
   const params = useParams();

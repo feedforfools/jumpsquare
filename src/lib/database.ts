@@ -1,5 +1,6 @@
 import { supabase } from "./supabase";
 import { Movie, Director, Jumpscare } from "@/types";
+import { MOVIES_PER_PAGE } from "@/lib/constants";
 
 // Define the structure that Supabase returns
 interface SupabaseMovieResponse {
@@ -19,8 +20,27 @@ interface SupabaseMovieResponse {
   }>;
 }
 
-// Get all movies with directors
-export async function getMovies(): Promise<Movie[]> {
+export interface PaginatedMoviesResponse {
+  movies: Movie[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+// Get paginated movies with directors
+export async function getMovies(
+  page: number = 1
+): Promise<PaginatedMoviesResponse> {
+  const from = (page - 1) * MOVIES_PER_PAGE;
+  const to = from + MOVIES_PER_PAGE - 1;
+
+  // First, get the total count
+  const { count: totalCount } = await supabase
+    .from("movies")
+    .select("*", { count: "exact", head: true });
+
+  // Then get the paginated results
   const { data: movies, error } = await supabase
     .from("movies")
     .select(
@@ -35,26 +55,62 @@ export async function getMovies(): Promise<Movie[]> {
       )
     `
     )
-    .order("title");
+    .order("title")
+    .range(from, to);
 
   if (error) {
     console.error("Error fetching movies:", error);
-    return [];
+    return {
+      movies: [],
+      totalCount: 0,
+      currentPage: page,
+      totalPages: 0,
+      hasMore: false,
+    };
   }
 
-  // Transform the data to match our Movie type
-  return (movies as SupabaseMovieResponse[]).map((movie) => ({
-    ...movie,
-    directors: movie.movie_directors.map((md) => md.directors),
-  }));
+  const transformedMovies = (movies as SupabaseMovieResponse[]).map(
+    (movie) => ({
+      ...movie,
+      directors: movie.movie_directors.map((md) => md.directors),
+    })
+  );
+
+  const totalPages = Math.ceil((totalCount || 0) / MOVIES_PER_PAGE);
+
+  return {
+    movies: transformedMovies,
+    totalCount: totalCount || 0,
+    currentPage: page,
+    totalPages,
+    hasMore: page < totalPages,
+  };
 }
 
-// Search movies
-export async function searchMovies(query: string): Promise<Movie[]> {
+// Search movies with pagination
+export async function searchMovies(
+  query: string,
+  page: number = 1
+): Promise<PaginatedMoviesResponse> {
   if (!query.trim()) {
-    return getMovies();
+    return getMovies(page);
   }
 
+  const from = (page - 1) * MOVIES_PER_PAGE;
+  const to = from + MOVIES_PER_PAGE - 1;
+
+  // Build the filter
+  const filter = `title.ilike.%${query}%,genre.ilike.%${query}%,year.eq.${
+    parseInt(query) || 0
+  }`;
+
+  // Get total count for search results
+  const { count: totalCount } = await supabase
+    .from("movies")
+    .select("*", { count: "exact", head: true })
+    .or(filter);
+
+  // Get paginated search results
   const { data: movies, error } = await supabase
     .from("movies")
     .select(
@@ -69,22 +125,37 @@ export async function searchMovies(query: string): Promise<Movie[]> {
       )
     `
     )
-    .or(
-      `title.ilike.%${query}%,genre.ilike.%${query}%,year.eq.${
-        parseInt(query) || 0
-      }`
-    )
-    .order("title");
+    .or(filter)
+    .order("title")
+    .range(from, to);
 
   if (error) {
     console.error("Error searching movies:", error);
-    return [];
+    return {
+      movies: [],
+      totalCount: 0,
+      currentPage: page,
+      totalPages: 0,
+      hasMore: false,
+    };
   }
 
-  return (movies as SupabaseMovieResponse[]).map((movie) => ({
-    ...movie,
-    directors: movie.movie_directors.map((md) => md.directors),
-  }));
+  const transformedMovies = (movies as SupabaseMovieResponse[]).map(
+    (movie) => ({
+      ...movie,
+      directors: movie.movie_directors.map((md) => md.directors),
+    })
+  );
+
+  const totalPages = Math.ceil((totalCount || 0) / MOVIES_PER_PAGE);
+
+  return {
+    movies: transformedMovies,
+    totalCount: totalCount || 0,
+    currentPage: page,
+    totalPages,
+    hasMore: page < totalPages,
+  };
 }
 
 // Get single movie by ID
