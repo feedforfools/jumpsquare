@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { JumpscareTable } from "@/components/jumpscare-table";
+import { MovieDetailSkeleton } from "@/components/movie-detail-skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { ComingSoon } from "@/components/ui/coming-soon";
 import { getMovieById, getJumpscaresByMovieId } from "@/lib/database";
 import { Movie, Jumpscare } from "@/types";
-import { ArrowLeft, Calendar, Zap, User, Clock, Loader2 } from "lucide-react";
+import { ArrowLeft, Calendar, Zap, User, Clock } from "lucide-react";
 
 export default function MovieDetailPage() {
   const params = useParams();
@@ -59,11 +60,20 @@ export default function MovieDetailPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-12">
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-red-600" />
-            <span className="ml-2 text-gray-600">Loading movie details...</span>
+        <main className="flex-1 container mx-auto px-4 py-8">
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              disabled
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back</span>
+            </Button>
           </div>
+
+          <MovieDetailSkeleton />
         </main>
         <Footer />
       </div>

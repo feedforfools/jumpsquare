@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { SearchBar } from "@/components/search-bar";
 import { MovieGrid } from "@/components/movie-grid";
+import { MovieGridSkeleton } from "@/components/movie-grid-skeleton";
 import { Pagination } from "@/components/pagination";
 import {
   getMovies,
@@ -12,7 +13,8 @@ import {
   PaginatedMoviesResponse,
 } from "@/lib/database";
 import { Movie } from "@/types";
-import { Loader2 } from "lucide-react";
+import { MovieCountSkeleton } from "@/components/movie-count-skeleton";
+import { PaginationSkeleton } from "@/components/pagination-skeleton";
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -179,7 +181,9 @@ export default function HomePage() {
                   : "Featured Movies"}
               </h2>
               <div className="text-sm text-gray-600">
-                {!isLoadingState && (
+                {isLoadingState ? (
+                  <MovieCountSkeleton />
+                ) : (
                   <>
                     {totalCount} movie{totalCount !== 1 ? "s" : ""}
                     {totalPages > 1 && (
@@ -193,12 +197,12 @@ export default function HomePage() {
             </div>
 
             {isLoadingState ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-red-600" />
-                <span className="ml-2 text-gray-600">
-                  {loading ? "Loading movies..." : "Searching..."}
-                </span>
-              </div>
+              <>
+                <MovieGridSkeleton count={12} />
+                <div className="mt-7">
+                  <PaginationSkeleton />
+                </div>
+              </>
             ) : (
               <>
                 <MovieGrid movies={movies} />
