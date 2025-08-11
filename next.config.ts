@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
             value: "DENY",
           },
           {
+            key: "X-Robots-Tag",
+            value: "index, follow, noarchive, noimageindex, nocache",
+          },
+          {
             key: "X-XSS-Protection",
             value: "1; mode=block",
           },

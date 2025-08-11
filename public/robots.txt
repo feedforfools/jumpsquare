@@ -1,0 +1,26 @@
+User-agent: *
+Disallow: /api/
+Disallow: /movie/*/export
+Crawl-delay: 10
+
+# Explicitly disallow common scraping bots
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot  
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Allow only major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://jumpsquare.com/sitemap.xml
