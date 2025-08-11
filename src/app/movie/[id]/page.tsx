@@ -13,7 +13,14 @@ import { Separator } from "@/components/ui/separator";
 import { ComingSoon } from "@/components/ui/coming-soon";
 import { getMovieById, getJumpscaresByMovieId } from "@/lib/database";
 import { Movie, Jumpscare } from "@/types";
-import { ArrowLeft, Calendar, Zap, User, Clock } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  Zap,
+  User,
+  Clock,
+  ChevronLeft,
+} from "lucide-react";
 
 export default function MovieDetailPage() {
   const params = useParams();
@@ -139,8 +146,12 @@ export default function MovieDetailPage() {
                 ? "The movie you're looking for doesn't exist in our database."
                 : "Something went wrong while loading the movie data."}
             </p>
-            <Button onClick={() => router.push("/")}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
+            <Button
+              variant="outline"
+              onClick={() => router.push("/")}
+              className="gap-1 hover:bg-red-50 hover:border-red-200 hover:text-red-700 transition-all duration-200 ease-in-out group"
+            >
+              <ChevronLeft className="h-4 w-4 group-hover:transform group-hover:-translate-x-1 transition-transform" />
               Back to Movies
             </Button>
           </div>
@@ -171,11 +182,11 @@ export default function MovieDetailPage() {
             {/* Back Button */}
             <div className="mb-6">
               <Button
-                variant="ghost"
+                variant="outline"
                 onClick={() => router.back()}
-                className="flex items-center space-x-2"
+                className="gap-1 hover:bg-red-50 hover:border-red-200 hover:text-red-700 transition-all duration-200 ease-in-out group"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4 group-hover:transform group-hover:-translate-x-1 transition-transform" />
                 <span>Back</span>
               </Button>
             </div>
@@ -228,7 +239,7 @@ export default function MovieDetailPage() {
                 </div>
 
                 {/* Stats Card */}
-                <Card className="lg:w-80 bg-white">
+                <Card className="lg:w-90 bg-white">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <Zap className="h-5 w-5 text-yellow-500" />
