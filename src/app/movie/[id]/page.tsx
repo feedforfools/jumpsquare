@@ -24,6 +24,51 @@ export default function MovieDetailPage() {
   const [jumpscares, setJumpscares] = useState<Jumpscare[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [useExtendedTimeFormat, setUseExtendedTimeFormat] = useState(false);
+
+  // Helper function to format movie duration
+  const formatMovieDuration = (minutes: number) => {
+    if (!useExtendedTimeFormat) {
+      return `${minutes} minutes`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    if (hours === 0) {
+      return `${remainingMinutes}m`;
+    }
+
+    return `${hours}h ${remainingMinutes}m`;
+  };
+
+  // Helper function to format jumpscare timestamps
+  const formatJumpscareTimestamp = (
+    minutes: number,
+    seconds: number,
+    millis: number
+  ) => {
+    if (!useExtendedTimeFormat) {
+      const formattedMinutes = minutes.toString().padStart(2, "0");
+      const formattedSeconds = seconds.toString().padStart(2, "0");
+      return `${formattedMinutes}:${formattedSeconds}.${millis
+        .toString()
+        .padStart(3, "0")}`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    const formattedHours = hours.toString().padStart(2, "0");
+    const formattedMinutes = remainingMinutes.toString().padStart(2, "0");
+    const formattedSeconds = seconds.toString().padStart(2, "0");
+    const formattedMillis = millis.toString().padStart(3, "0");
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}.${formattedMillis}`;
+  };
+
+  const toggleTimeFormat = () => {
+    setUseExtendedTimeFormat(!useExtendedTimeFormat);
+  };
 
   useEffect(() => {
     const loadMovieData = async () => {
@@ -152,7 +197,13 @@ export default function MovieDetailPage() {
                     {movie.runtime_minutes && (
                       <div className="flex items-center space-x-2">
                         <Clock className="h-4 w-4 text-gray-900" />
-                        <span>{movie.runtime_minutes} minutes</span>
+                        <button
+                          onClick={toggleTimeFormat}
+                          className="hover:text-red-600 transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
+                          title="Click to toggle time format"
+                        >
+                          {formatMovieDuration(movie.runtime_minutes)}
+                        </button>
                       </div>
                     )}
                   </div>
@@ -214,6 +265,9 @@ export default function MovieDetailPage() {
                         Times are approximate and may vary by version/cut of the
                         film.
                       </p>
+                      <p className="text-xs mt-2 text-gray-500">
+                        💡 Click on any timestamp to toggle time format
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -240,7 +294,11 @@ export default function MovieDetailPage() {
                 </ComingSoon>
               </div>
 
-              <JumpscareTable jumpscares={jumpscares} />
+              <JumpscareTable
+                jumpscares={jumpscares}
+                formatTimestamp={formatJumpscareTimestamp}
+                onTimestampClick={toggleTimeFormat}
+              />
             </div>
 
             {/* Action Buttons */}
@@ -261,10 +319,3 @@ export default function MovieDetailPage() {
     </div>
   );
 }
-
-// So I would like to refine a little bit the UI of this project.
-
-// Only minor things but a moderate amount, could you please handle them providing the code necessary to do them?
-
-// 1. I need to disable any buttons that are now not being used yet, maybe adding something subtle to enforce that those buttons and functionalities are "coming soon"; this will include most definitely the Submit Movie button in the header, the Suggest Edit button, the Report Issue button, the Rate this Data button, the Export as SRT button. (Do you think it's a good idea or is it better to have them removed completely?)
-// 2. I would probably need a separate page for preventing the scraping of the content I will add in the future, not sure how to do that and what to write, but basically what i

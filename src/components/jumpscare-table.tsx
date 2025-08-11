@@ -8,14 +8,23 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Jumpscare } from "@/types";
-import { formatTimestamp } from "@/lib/database";
-import { Zap, Clock, AlertTriangle } from "lucide-react";
+import { Zap } from "lucide-react";
 
 interface JumpscareTableProps {
   jumpscares: Jumpscare[];
+  formatTimestamp?: (
+    minutes: number,
+    seconds: number,
+    millis: number
+  ) => string;
+  onTimestampClick?: () => void;
 }
 
-export function JumpscareTable({ jumpscares }: JumpscareTableProps) {
+export function JumpscareTable({
+  jumpscares,
+  formatTimestamp,
+  onTimestampClick,
+}: JumpscareTableProps) {
   const getIntensityColor = (intensity: number) => {
     if (intensity <= 3) return "bg-green-100 text-green-800";
     if (intensity <= 6) return "bg-yellow-100 text-yellow-800";
@@ -23,16 +32,16 @@ export function JumpscareTable({ jumpscares }: JumpscareTableProps) {
     return "bg-red-100 text-red-800";
   };
 
-  const getCategoryIcon = (category: string) => {
+  const getCategoryColor = (category: string) => {
     switch (category) {
       case "major":
-        return <AlertTriangle className="h-4 w-4 text-red-500" />;
+        return "bg-red-100 text-red-800";
       case "minor":
-        return <Zap className="h-4 w-4 text-yellow-500" />;
+        return "bg-blue-100 text-blue-800";
       case "false_alarm":
-        return <Clock className="h-4 w-4 text-blue-500" />;
+        return "bg-gray-100 text-gray-800";
       default:
-        return <Zap className="h-4 w-4 text-gray-500" />;
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -48,6 +57,20 @@ export function JumpscareTable({ jumpscares }: JumpscareTableProps) {
         return category;
     }
   };
+
+  // Default format function if none provided
+  const defaultFormatTimestamp = (
+    minutes: number,
+    seconds: number,
+    millis: number
+  ) => {
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+    const formattedSeconds = seconds.toString().padStart(2, "0");
+    const formattedMillis = millis.toString().padStart(3, "0");
+    return `${formattedMinutes}:${formattedSeconds}.${formattedMillis}`;
+  };
+
+  const timestampFormatter = formatTimestamp || defaultFormatTimestamp;
 
   if (jumpscares.length === 0) {
     return (
@@ -70,37 +93,34 @@ export function JumpscareTable({ jumpscares }: JumpscareTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {jumpscares
-            .sort((a, b) => {
-              const aTotal = a.timestamp_minutes * 60 + a.timestamp_seconds;
-              const bTotal = b.timestamp_minutes * 60 + b.timestamp_seconds;
-              return aTotal - bTotal;
-            })
-            .map((jumpscare) => (
-              <TableRow key={jumpscare.id}>
-                <TableCell className="font-mono">
-                  {formatTimestamp(
+          {jumpscares.map((jumpscare) => (
+            <TableRow key={jumpscare.id}>
+              <TableCell className="font-mono">
+                <button
+                  onClick={onTimestampClick}
+                  className="hover:text-red-600 transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
+                  title="Click to toggle time format"
+                >
+                  {timestampFormatter(
                     jumpscare.timestamp_minutes,
                     jumpscare.timestamp_seconds,
                     jumpscare.timestamp_millis
                   )}
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    {getCategoryIcon(jumpscare.category)}
-                    <span className="text-sm">
-                      {getCategoryLabel(jumpscare.category)}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge className={getIntensityColor(jumpscare.intensity)}>
-                    {jumpscare.intensity}/10
-                  </Badge>
-                </TableCell>
-                <TableCell>{jumpscare.description}</TableCell>
-              </TableRow>
-            ))}
+                </button>
+              </TableCell>
+              <TableCell>
+                <Badge className={getCategoryColor(jumpscare.category)}>
+                  {getCategoryLabel(jumpscare.category)}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge className={getIntensityColor(jumpscare.intensity)}>
+                  {jumpscare.intensity}/10
+                </Badge>
+              </TableCell>
+              <TableCell>{jumpscare.description}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>
