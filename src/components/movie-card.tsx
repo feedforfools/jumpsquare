@@ -67,7 +67,7 @@ export function MovieCard({ movie }: MovieCardProps) {
             </Badge>
           </div>
           {movie.description && (
-            <p className="text-sm text-gray-600 line-clamp-3">
+            <p className="text-sm text-gray-600 line-clamp-2">
               {movie.description}
             </p>
           )}
