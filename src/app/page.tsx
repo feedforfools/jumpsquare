@@ -123,18 +123,8 @@ export default function HomePage() {
               Get precise timestamps, intensity levels, and descriptions for
               every jumpscare in thousands of movies.
             </p>
-            {/* <div className="flex justify-center">
-              <SearchBar
-                onSearch={handleSearch}
-                placeholder="Search for a movie..."
-
-              />
-            </div> */}
 
             <div className="relative group max-w-2xl mx-auto">
-              {/* Glow Effect */}
-              {/* <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-red-400 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div> */}
-
               {/* Search Bar Container */}
               <div className="relative bg-white backdrop-blur-3xl rounded-3xl border border-gray-800 p-1">
                 <SearchBar
@@ -180,9 +170,9 @@ export default function HomePage() {
         </section>
 
         {/* Movies Section */}
-        <section id="movies-section" className="py-12">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
+        <section id="movies-section" className="py-2 ">
+          <div className="container mx-auto px-4 max-w-8xl">
+            <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg md:text-xl font-bold">
                 {searchQuery
                   ? `Search Results for "${searchQuery}"`
@@ -219,7 +209,7 @@ export default function HomePage() {
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
-                    className="mt-8"
+                    className="mt-7"
                   />
                 )}
               </>

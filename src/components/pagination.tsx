@@ -69,17 +69,14 @@ export function Pagination({
 
   return (
     <div
-      className={cn(
-        "flex items-center justify-center space-x-2 py-4",
-        className
-      )}
+      className={cn("flex items-center justify-center space-x-2", className)}
     >
       <Button
         variant="outline"
         size="sm"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="gap-1"
+        className="gap-1 hover:bg-red-50 hover:border-red-200 hover:text-red-700 transition-all duration-200 ease-in-out disabled:hover:bg-transparent disabled:hover:border-border disabled:hover:text-muted-foreground"
       >
         <ChevronLeft className="h-4 w-4" />
         <span className="hidden sm:inline">Previous</span>
@@ -104,7 +101,12 @@ export function Pagination({
               variant={isActive ? "default" : "outline"}
               size="sm"
               onClick={() => onPageChange(pageNum)}
-              className={cn("h-8 w-8 p-0", isActive && "pointer-events-none")}
+              className={cn(
+                "h-8 w-8 p-0 transition-all duration-200 ease-in-out",
+                isActive
+                  ? "bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white border-0 shadow-lg pointer-events-none"
+                  : "hover:bg-red-50 hover:border-red-200 hover:text-red-700 hover:scale-105 hover:shadow-sm"
+              )}
             >
               {pageNum}
             </Button>
@@ -117,7 +119,7 @@ export function Pagination({
         size="sm"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="gap-1"
+        className="gap-1 hover:bg-red-50 hover:border-red-200 hover:text-red-700 transition-all duration-200 ease-in-out disabled:hover:bg-transparent disabled:hover:border-border disabled:hover:text-muted-foreground"
       >
         <span className="hidden sm:inline">Next</span>
         <ChevronRight className="h-4 w-4" />

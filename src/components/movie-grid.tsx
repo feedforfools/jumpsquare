@@ -18,8 +18,8 @@ export function MovieGrid({ movies }: MovieGridProps) {
 
   return (
     <div className="relative">
-      {/* Grid container with fixed minimum height based on expected card heights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[900px] md:min-h-[750px] lg:min-h-[500px] content-start">
+      {/* Grid container with responsive columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[700px] md:min-h-[550px] lg:min-h-[400px] content-start">
         {movies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
