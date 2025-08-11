@@ -63,6 +63,10 @@ export default function HomePage() {
     }
   };
 
+  const handleQuickSearch = (title: string) => {
+    handleSearch(title);
+  };
+
   // Handle search pagination
   useEffect(() => {
     const performSearch = async () => {
@@ -104,21 +108,73 @@ export default function HomePage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-red-50 to-white py-12">
+        <section className="bg-gradient-to-b from-red-100 to-white pb-12 pt-8">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl font-bold mb-4">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/70 backdrop-blur-sm border border-black text-red-600 text-xs md:text-sm font-medium mb-6">
+              <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
+              The Ultimate Jumpscare Database
+            </div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
               Know When the <span className="text-red-600">Jumps</span> Are
               Coming
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              The ultimate database of movie jumpscares. Watch horror movies
-              with confidence or avoid the jumps entirely.
+            <p className="text-sm sm:text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+              Get precise timestamps, intensity levels, and descriptions for
+              every jumpscare in thousands of movies.
             </p>
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               <SearchBar
                 onSearch={handleSearch}
                 placeholder="Search for a movie..."
+
               />
+            </div> */}
+
+            <div className="relative group max-w-2xl mx-auto">
+              {/* Glow Effect */}
+              {/* <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-red-400 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div> */}
+
+              {/* Search Bar Container */}
+              <div className="relative bg-white backdrop-blur-3xl rounded-3xl border border-gray-800 p-1">
+                <SearchBar
+                  onSearch={handleSearch}
+                  placeholder="Search for a movie..."
+                  className="w-full"
+                  variant="hero"
+                />
+              </div>
+            </div>
+            {/* Popular Searches */}
+            <div className="mt-2 flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
+              <span className="text-gray-600">Popular:</span>
+              <button
+                onClick={() => handleQuickSearch("The Conjuring")}
+                className="text-red-600 hover:text-red-300 transition-colors"
+              >
+                The Conjuring
+              </button>
+              <span className="text-gray-600">•</span>
+              <button
+                onClick={() => handleQuickSearch("Hereditary")}
+                className="text-red-600 hover:text-red-300 transition-colors"
+              >
+                Hereditary
+              </button>
+              <span className="text-gray-600">•</span>
+              <button
+                onClick={() => handleQuickSearch("A Quiet Place")}
+                className="text-red-600 hover:text-red-300 transition-colors"
+              >
+                A Quiet Place
+              </button>
+              <span className="text-gray-600 hidden sm:inline">•</span>
+              <button
+                onClick={() => handleQuickSearch("Insidious")}
+                className="hidden sm:inline text-red-600 hover:text-red-300 transition-colors"
+              >
+                Insidious
+              </button>
             </div>
           </div>
         </section>
