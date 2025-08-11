@@ -183,7 +183,7 @@ export default function HomePage() {
         <section id="movies-section" className="py-12">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold">
+              <h2 className="text-lg md:text-xl font-bold">
                 {searchQuery
                   ? `Search Results for "${searchQuery}"`
                   : "Featured Movies"}
@@ -191,9 +191,9 @@ export default function HomePage() {
               <div className="text-sm text-gray-600">
                 {!isLoadingState && (
                   <>
-                    {totalCount} movie{totalCount !== 1 ? "s" : ""} found
+                    {totalCount} movie{totalCount !== 1 ? "s" : ""}
                     {totalPages > 1 && (
-                      <span className="ml-2">
+                      <span className="ml-1">
                         • Page {currentPage} of {totalPages}
                       </span>
                     )}
