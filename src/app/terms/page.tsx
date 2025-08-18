@@ -319,7 +319,7 @@ export default function TermsOfServicePage() {
                   For questions about these terms, licensing inquiries, or to
                   report violations, please{" "}
                   <Link
-                    href="/contact"
+                    href="mailto:hello@feedforfools.com"
                     className="text-red-600 hover:text-red-700 underline font-semibold"
                   >
                     contact us here

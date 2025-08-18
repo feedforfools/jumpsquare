@@ -12,11 +12,7 @@ import { Zap } from "lucide-react";
 
 interface JumpscareTableProps {
   jumpscares: Jumpscare[];
-  formatTimestamp?: (
-    minutes: number,
-    seconds: number,
-    millis: number
-  ) => string;
+  formatTimestamp?: (minutes: number, seconds: number) => string;
   onTimestampClick?: () => void;
 }
 
@@ -59,15 +55,10 @@ export function JumpscareTable({
   };
 
   // Default format function if none provided
-  const defaultFormatTimestamp = (
-    minutes: number,
-    seconds: number,
-    millis: number
-  ) => {
+  const defaultFormatTimestamp = (minutes: number, seconds: number) => {
     const formattedMinutes = minutes.toString().padStart(2, "0");
     const formattedSeconds = seconds.toString().padStart(2, "0");
-    const formattedMillis = millis.toString().padStart(3, "0");
-    return `${formattedMinutes}:${formattedSeconds}.${formattedMillis}`;
+    return `${formattedMinutes}:${formattedSeconds}`;
   };
 
   const timestampFormatter = formatTimestamp || defaultFormatTimestamp;
@@ -103,8 +94,7 @@ export function JumpscareTable({
                 >
                   {timestampFormatter(
                     jumpscare.timestamp_minutes,
-                    jumpscare.timestamp_seconds,
-                    jumpscare.timestamp_millis
+                    jumpscare.timestamp_seconds
                   )}
                 </button>
               </TableCell>

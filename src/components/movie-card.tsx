@@ -21,6 +21,22 @@ export function MovieCard({ movie }: MovieCardProps) {
     return "Intense";
   };
 
+  // Get genre display text
+  const getGenreDisplay = () => {
+    if (movie.genres && movie.genres.length > 0) {
+      // For card display, show primary genre (first one) or up to 2 genres
+      const genreNames = movie.genres.map((g) => g.name);
+      if (genreNames.length === 1) {
+        return genreNames[0];
+      } else if (genreNames.length === 2) {
+        return genreNames.join(", ");
+      } else {
+        return `${genreNames[0]}, +${genreNames.length - 1}`;
+      }
+    }
+    return movie.genre || "Horror";
+  };
+
   return (
     <Link href={`/movie/${movie.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
@@ -36,7 +52,7 @@ export function MovieCard({ movie }: MovieCardProps) {
           <div className="flex items-center space-x-2 text-sm text-gray-600">
             <span>{movie.year}</span>
             <span>•</span>
-            <span>{movie.genre}</span>
+            <span>{getGenreDisplay()}</span>
             {movie.runtime_minutes && (
               <>
                 <span>•</span>

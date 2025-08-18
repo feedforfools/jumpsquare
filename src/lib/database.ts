@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { Movie, Director, Jumpscare } from "@/types";
+import { Movie, Director, Jumpscare, Genre } from "@/types";
 import { MOVIES_PER_PAGE } from "@/lib/constants";
 
 // Define the structure that Supabase returns
@@ -7,7 +7,7 @@ interface SupabaseMovieResponse {
   id: string;
   title: string;
   year: number;
-  genre: string;
+  genre: string; // TODO: remove this when switching to genres array
   rating: string;
   jumpscare_count: number;
   poster_url?: string;
@@ -15,8 +15,11 @@ interface SupabaseMovieResponse {
   runtime_minutes?: number;
   created_at: string;
   updated_at: string;
-  movie_directors: Array<{
-    directors: Director;
+  v2_movie_directors: Array<{
+    v2_directors: Director;
+  }>;
+  v2_movie_genres: Array<{
+    v2_genres: Genre;
   }>;
 }
 
@@ -37,20 +40,27 @@ export async function getMovies(
 
   // First, get the total count
   const { count: totalCount } = await supabase
-    .from("movies")
+    .from("v2_movies")
     .select("*", { count: "exact", head: true });
 
   // Then get the paginated results
   const { data: movies, error } = await supabase
-    .from("movies")
+    .from("v2_movies")
     .select(
       `
       *,
-      movie_directors (
-        directors (
+      v2_movie_directors (
+        v2_directors (
           id,
           name,
           bio
+        )
+      ),
+      v2_movie_genres (
+        v2_genres (
+          id,
+          name,
+          description
         )
       )
     `
@@ -72,7 +82,8 @@ export async function getMovies(
   const transformedMovies = (movies as SupabaseMovieResponse[]).map(
     (movie) => ({
       ...movie,
-      directors: movie.movie_directors.map((md) => md.directors),
+      directors: movie.v2_movie_directors.map((md) => md.v2_directors),
+      genres: movie.v2_movie_genres.map((mg) => mg.v2_genres),
     })
   );
 
@@ -100,32 +111,39 @@ export async function searchMovies(
   const to = from + MOVIES_PER_PAGE - 1;
 
   // Build the filter
-  const filter = `title.ilike.%${query}%,genre.ilike.%${query}%,year.eq.${
+  const titleYearFilter = `title.ilike.%${query}%,year.eq.${
     parseInt(query) || 0
   }`;
 
   // Get total count for search results
   const { count: totalCount } = await supabase
-    .from("movies")
+    .from("v2_movies")
     .select("*", { count: "exact", head: true })
-    .or(filter);
+    .or(titleYearFilter);
 
   // Get paginated search results
   const { data: movies, error } = await supabase
-    .from("movies")
+    .from("v2_movies")
     .select(
       `
       *,
-      movie_directors (
-        directors (
+      v2_movie_directors (
+        v2_directors (
           id,
           name,
           bio
         )
+      ),
+      v2_movie_genres (
+        v2_genres (
+          id,
+          name,
+          description
+        )
       )
     `
     )
-    .or(filter)
+    .or(titleYearFilter)
     .order("title")
     .range(from, to);
 
@@ -143,7 +161,8 @@ export async function searchMovies(
   const transformedMovies = (movies as SupabaseMovieResponse[]).map(
     (movie) => ({
       ...movie,
-      directors: movie.movie_directors.map((md) => md.directors),
+      directors: movie.v2_movie_directors.map((md) => md.v2_directors),
+      genres: movie.v2_movie_genres.map((mg) => mg.v2_genres),
     })
   );
 
@@ -161,15 +180,22 @@ export async function searchMovies(
 // Get single movie by ID
 export async function getMovieById(id: string): Promise<Movie | null> {
   const { data: movie, error } = await supabase
-    .from("movies")
+    .from("v2_movies")
     .select(
       `
       *,
-      movie_directors (
-        directors (
+      v2_movie_directors (
+        v2_directors (
           id,
           name,
           bio
+        )
+      ),
+      v2_movie_genres (
+        v2_genres (
+          id,
+          name,
+          description
         )
       )
     `
@@ -186,7 +212,8 @@ export async function getMovieById(id: string): Promise<Movie | null> {
 
   return {
     ...movieData,
-    directors: movieData.movie_directors.map((md) => md.directors),
+    directors: movieData.v2_movie_directors.map((md) => md.v2_directors),
+    genres: movieData.v2_movie_genres.map((mg) => mg.v2_genres),
   };
 }
 
@@ -195,7 +222,7 @@ export async function getJumpscaresByMovieId(
   movieId: string
 ): Promise<Jumpscare[]> {
   const { data: jumpscares, error } = await supabase
-    .from("jumpscares")
+    .from("v2_jumpscares")
     .select("*")
     .eq("movie_id", movieId)
     .order("timestamp_minutes", { ascending: true })
@@ -212,7 +239,7 @@ export async function getJumpscaresByMovieId(
 // Get all directors
 export async function getDirectors(): Promise<Director[]> {
   const { data: directors, error } = await supabase
-    .from("directors")
+    .from("v2_directors")
     .select("*")
     .order("name");
 
@@ -224,19 +251,24 @@ export async function getDirectors(): Promise<Director[]> {
   return directors || [];
 }
 
-// Helper function to format timestamp with milliseconds
-export const formatTimestamp = (
-  minutes: number,
-  seconds: number,
-  millis: number = 0
-): string => {
-  const formattedMinutes = minutes.toString().padStart(2, "0");
-  const formattedSeconds = seconds.toString().padStart(2, "0");
+// Get all genres
+export async function getGenres(): Promise<Genre[]> {
+  const { data: genres, error } = await supabase
+    .from("v2_genres")
+    .select("*")
+    .order("name");
 
-  if (millis > 0) {
-    const formattedMillis = millis.toString().padStart(3, "0");
-    return `${formattedMinutes}:${formattedSeconds}.${formattedMillis}`;
+  if (error) {
+    console.error("Error fetching genres:", error);
+    return [];
   }
 
+  return genres || [];
+}
+
+// Helper function to format timestamp
+export const formatTimestamp = (minutes: number, seconds: number): string => {
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+  const formattedSeconds = seconds.toString().padStart(2, "0");
   return `${formattedMinutes}:${formattedSeconds}`;
 };

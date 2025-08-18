@@ -50,17 +50,11 @@ export default function MovieDetailPage() {
   };
 
   // Helper function to format jumpscare timestamps
-  const formatJumpscareTimestamp = (
-    minutes: number,
-    seconds: number,
-    millis: number
-  ) => {
+  const formatJumpscareTimestamp = (minutes: number, seconds: number) => {
     if (!useExtendedTimeFormat) {
       const formattedMinutes = minutes.toString().padStart(2, "0");
       const formattedSeconds = seconds.toString().padStart(2, "0");
-      return `${formattedMinutes}:${formattedSeconds}.${millis
-        .toString()
-        .padStart(3, "0")}`;
+      return `${formattedMinutes}:${formattedSeconds}`;
     }
 
     const hours = Math.floor(minutes / 60);
@@ -68,9 +62,8 @@ export default function MovieDetailPage() {
     const formattedHours = hours.toString().padStart(2, "0");
     const formattedMinutes = remainingMinutes.toString().padStart(2, "0");
     const formattedSeconds = seconds.toString().padStart(2, "0");
-    const formattedMillis = millis.toString().padStart(3, "0");
 
-    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}.${formattedMillis}`;
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   };
 
   const toggleTimeFormat = () => {
@@ -171,6 +164,14 @@ export default function MovieDetailPage() {
 
   const intensityLevel = getIntensityLevel(movie.jumpscare_count);
 
+  // Get genre display text
+  const getGenreDisplay = () => {
+    if (movie.genres && movie.genres.length > 0) {
+      return movie.genres.map((g) => g.name).join(", ");
+    }
+    return movie.genre || "Horror";
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -204,7 +205,7 @@ export default function MovieDetailPage() {
                       <span>{movie.year}</span>
                     </div>
                     <Badge variant="outline">{movie.rating}</Badge>
-                    <Badge variant="outline">{movie.genre}</Badge>
+                    <Badge variant="outline">{getGenreDisplay()}</Badge>
                     {movie.runtime_minutes && (
                       <div className="flex items-center space-x-2">
                         <Clock className="h-4 w-4 text-gray-900" />
