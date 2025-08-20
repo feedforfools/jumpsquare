@@ -6,62 +6,63 @@ import { Footer } from "@/components/layout/footer";
 import { SearchBar } from "@/components/search-bar";
 import { MovieGrid } from "@/components/movie-grid";
 import { MovieGridSkeleton } from "@/components/movie-grid-skeleton";
-import { Pagination } from "@/components/pagination";
-import {
-  getMovies,
-  searchMovies,
-  PaginatedMoviesResponse,
-} from "@/lib/database";
 import { Movie } from "@/types";
-import { MovieCountSkeleton } from "@/components/movie-count-skeleton";
-import { PaginationSkeleton } from "@/components/pagination-skeleton";
+
+interface DiscoverResponse {
+  recentlyAdded: Movie[];
+  highestRated: Movie[];
+  mostJumpscares: Movie[];
+}
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [searchResults, setSearchResults] = useState<Movie[]>([]);
+  const [discoverData, setDiscoverData] = useState<DiscoverResponse | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
-  const [searching, setSearching] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
+  const [isSearching, setIsSearching] = useState(false);
 
-  // Load movies for current page
+  const [view, setView] = useState<"recent" | "jumpscares" | "highestRated">(
+    "recent"
+  );
+
+  // Fetch initial discovery data for the homepage
   useEffect(() => {
-    const loadMovies = async () => {
+    const fetchDiscoverData = async () => {
       setLoading(true);
       try {
-        const response: PaginatedMoviesResponse = await getMovies(currentPage);
-        setMovies(response.movies);
-        setTotalPages(response.totalPages);
-        setTotalCount(response.totalCount);
+        const response = await fetch("/api/discover");
+        const data: DiscoverResponse = await response.json();
+        setDiscoverData(data);
       } catch (error) {
-        console.error("Failed to load movies:", error);
+        console.error("Failed to fetch discovery data:", error);
       } finally {
         setLoading(false);
       }
     };
+    fetchDiscoverData();
+  }, []);
 
-    // Only load if there's no search query
-    if (!searchQuery) {
-      loadMovies();
-    }
-  }, [currentPage, searchQuery]);
-
-  // Handle search
+  // Handle a new search
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
-    setSearching(true);
-    setCurrentPage(1); // Reset to first page on new search
+    if (!query || query.length < 3) {
+      setIsSearching(false);
+      setSearchResults([]);
+      return;
+    }
 
+    setIsSearching(true);
     try {
-      const response: PaginatedMoviesResponse = await searchMovies(query, 1);
-      setMovies(response.movies);
-      setTotalPages(response.totalPages);
-      setTotalCount(response.totalCount);
+      const params = new URLSearchParams({ query });
+      const response = await fetch(`/api/search?${params.toString()}`);
+      const data = await response.json();
+      setSearchResults(data.movies || []);
     } catch (error) {
-      console.error("Search failed:", error);
+      console.error("Failed to fetch search data:", error);
     } finally {
-      setSearching(false);
+      setIsSearching(false);
     }
   };
 
@@ -69,40 +70,8 @@ export default function HomePage() {
     handleSearch(title);
   };
 
-  // Handle search pagination
-  useEffect(() => {
-    const performSearch = async () => {
-      if (searchQuery && currentPage > 1) {
-        setSearching(true);
-        try {
-          const response: PaginatedMoviesResponse = await searchMovies(
-            searchQuery,
-            currentPage
-          );
-          setMovies(response.movies);
-          setTotalPages(response.totalPages);
-          setTotalCount(response.totalCount);
-        } catch (error) {
-          console.error("Search pagination failed:", error);
-        } finally {
-          setSearching(false);
-        }
-      }
-    };
-
-    performSearch();
-  }, [currentPage, searchQuery]);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    // Scroll to top of movies section
-    const moviesSection = document.getElementById("movies-section");
-    if (moviesSection) {
-      moviesSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
-  const isLoadingState = loading || searching;
+  const isLoadingState = loading || isSearching;
+  const showSearchResults = searchQuery.length >= 3;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -168,55 +137,66 @@ export default function HomePage() {
                 Insidious
               </button>
             </div>
+            {/* View Selector: Recently Added / Most Jumpscares / Highest Rated */}
+            <div className="mt-6 flex justify-center gap-2">
+              {[
+                { key: "recent", label: "Recently Added" },
+                { key: "jumpscares", label: "Most Jumpscares" },
+                { key: "highestRated", label: "Highest Rated" },
+              ].map((tab) => {
+                const active = view === (tab.key as any);
+                return (
+                  <button
+                    key={tab.key}
+                    onClick={() => setView(tab.key as any)}
+                    className={`px-3 py-1 rounded-full text-sm font-medium transition ${
+                      active
+                        ? "bg-red-600 text-white"
+                        : "bg-white border border-gray-200 text-red-600"
+                    }`}
+                    aria-pressed={active}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </section>
 
         {/* Movies Section */}
-        <section id="movies-section" className="py-2 ">
+        <section id="movies-section" className="py-2">
           <div className="container mx-auto px-4 max-w-8xl">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg md:text-xl font-bold">
-                {searchQuery
-                  ? `Search Results for "${searchQuery}"`
-                  : "Featured Movies"}
-              </h2>
-              <div className="text-sm text-gray-600">
-                {isLoadingState ? (
-                  <MovieCountSkeleton />
-                ) : (
-                  <>
-                    {totalCount} movie{totalCount !== 1 ? "s" : ""}
-                    {totalPages > 1 && (
-                      <span className="ml-1">
-                        • Page {currentPage} of {totalPages}
-                      </span>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-
             {isLoadingState ? (
+              <MovieGridSkeleton count={24} />
+            ) : showSearchResults ? (
               <>
-                <MovieGridSkeleton count={12} />
-                <div className="mt-7">
-                  <PaginationSkeleton />
-                </div>
+                <h2 className="text-lg md:text-xl font-bold mb-5">
+                  Search Results for "{searchQuery}"
+                </h2>
+                <MovieGrid movies={searchResults} />
               </>
             ) : (
-              <>
-                <MovieGrid movies={movies} />
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                    className="mt-7"
+              discoverData && (
+                <div>
+                  <h2 className="text-lg md:text-xl font-bold mb-5">
+                    {view === "recent"
+                      ? "Recently Added"
+                      : view === "jumpscares"
+                      ? "Most Jumpscares"
+                      : "Highest Rated"}
+                  </h2>
+                  <MovieGrid
+                    movies={
+                      view === "recent"
+                        ? discoverData.recentlyAdded
+                        : view === "jumpscares"
+                        ? discoverData.mostJumpscares
+                        : discoverData.highestRated
+                    }
                   />
-                )}
-              </>
+                </div>
+              )
             )}
           </div>
         </section>

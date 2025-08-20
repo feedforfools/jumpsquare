@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ComingSoon } from "@/components/ui/coming-soon";
-import { getMovieById, getJumpscaresByMovieId } from "@/lib/database";
 import { Movie, Jumpscare } from "@/types";
 import {
   ArrowLeft,
@@ -78,21 +77,28 @@ export default function MovieDetailPage() {
       setError(null);
 
       try {
-        const [movieData, jumpscareData] = await Promise.all([
-          getMovieById(movieId),
-          getJumpscaresByMovieId(movieId),
+        // Fetch both movie details and jumpscares from our new APIs in parallel
+        const [movieRes, jumpscaresRes] = await Promise.all([
+          fetch(`/api/movie/${movieId}`),
+          fetch(`/api/movie/${movieId}/jumpscares`),
         ]);
 
-        if (!movieData) {
-          setError("Movie not found");
-          return;
+        if (!movieRes.ok) {
+          if (movieRes.status === 404) setError("Movie not found");
+          else throw new Error("Failed to load movie details");
         }
+        if (!jumpscaresRes.ok) {
+          throw new Error("Failed to load jumpscares");
+        }
+
+        const movieData = await movieRes.json();
+        const jumpscareData = await jumpscaresRes.json();
 
         setMovie(movieData);
         setJumpscares(jumpscareData);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error loading movie data:", err);
-        setError("Failed to load movie data");
+        setError(err.message || "Failed to load movie data");
       } finally {
         setLoading(false);
       }

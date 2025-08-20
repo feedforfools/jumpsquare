@@ -1,0 +1,71 @@
+import { NextRequest, NextResponse } from "next/server";
+import {
+  supabaseAdmin,
+  searchRateLimit,
+  transformMovieForCard,
+} from "@/lib/server-utils";
+
+const SEARCH_RESULT_LIMIT = 24;
+
+export async function GET(request: NextRequest) {
+  // Apply Rate Limiting
+  const ip = request.headers.get("x-real-ip") ?? "127.0.0.1";
+  const { success, limit, remaining, reset } = await searchRateLimit.limit(ip);
+  const headers = {
+    "X-RateLimit-Limit": limit.toString(),
+    "X-RateLimit-Remaining": remaining.toString(),
+    "X-RateLimit-Reset": reset.toString(),
+  };
+
+  if (!success) {
+    return new NextResponse(JSON.stringify({ error: "Too Many Requests" }), {
+      status: 429,
+      headers,
+    });
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get("query");
+
+    // 1. Require a query
+    if (!query) {
+      return NextResponse.json(
+        { error: "Search query is required" },
+        { status: 400, headers }
+      );
+    }
+    // 2. Enforce minimum query length
+    if (query.length < 3) {
+      return NextResponse.json({ movies: [], totalCount: 0 }, { headers });
+    }
+
+    // TODO: Using Supabase Full-Text Search is more efficient and secure
+    // NOTE: Enable 'pg_trgm' extension and create a GIN index in Supabase for better performance
+    const { data, error, count } = await supabaseAdmin
+      .from("v2_movies")
+      .select(
+        `*, v2_movie_directors(v2_directors(id, name)), v2_movie_genres(v2_genres(id, name))`,
+        { count: "exact" }
+      )
+      .textSearch("title", `'${query}'`)
+      .limit(SEARCH_RESULT_LIMIT);
+
+    if (error) throw error;
+
+    const transformedMovies = data.map(transformMovieForCard);
+
+    return NextResponse.json(
+      {
+        movies: transformedMovies,
+        totalCount: count,
+      },
+      { headers }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message },
+      { status: 500, headers }
+    );
+  }
+}
