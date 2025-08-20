@@ -41,14 +41,21 @@ export function MovieCard({ movie }: MovieCardProps) {
     <Link href={`/movie/${movie.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
         <CardHeader>
-          <div className="flex items-start justify-between">
-            <CardTitle className="text-lg leading-tight">
-              {movie.title}
-            </CardTitle>
-            <Badge variant="outline" className="ml-2 text-xs">
-              {movie.rating}
-            </Badge>
-          </div>
+          <CardTitle className="min-w-0">
+            <div className="flex items-start justify-between">
+              <div className="min-w-0 flex-1 pr-2">
+                <span
+                  className="block truncate text-lg leading-tight"
+                  title={movie.title}
+                >
+                  {movie.title}
+                </span>
+              </div>
+              <Badge variant="outline" className="ml-2 text-xs flex-shrink-0">
+                {movie.rating}
+              </Badge>
+            </div>
+          </CardTitle>
           <div className="flex items-center space-x-2 text-sm text-gray-600">
             <span>{movie.year}</span>
             <span>•</span>

@@ -65,7 +65,8 @@ export async function getMovies(
       )
     `
     )
-    .order("title")
+    .order("jumpscare_count", { ascending: false })
+    .order("title", { ascending: true })
     .range(from, to);
 
   if (error) {
