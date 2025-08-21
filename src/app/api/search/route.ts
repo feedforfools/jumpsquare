@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  supabaseAdmin,
-  searchRateLimit,
-  transformMovieForCard,
-} from "@/lib/server-utils";
-
-const SEARCH_RESULT_LIMIT = 24;
+import { supabaseAdmin, searchRateLimit } from "@/lib/server-utils";
+import { transformMovieForCard } from "@/lib/server-utils";
+import { MOVIES_PER_PAGE } from "@/lib/constants";
 
 export async function GET(request: NextRequest) {
   // Apply Rate Limiting
@@ -49,7 +45,7 @@ export async function GET(request: NextRequest) {
         { count: "exact" }
       )
       .textSearch("title", `'${query}'`)
-      .limit(SEARCH_RESULT_LIMIT);
+      .limit(MOVIES_PER_PAGE);
 
     if (error) throw error;
 

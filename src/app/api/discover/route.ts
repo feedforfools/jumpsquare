@@ -4,6 +4,7 @@ import {
   discoverRateLimit,
   transformMovieForCard,
 } from "@/lib/server-utils";
+import { MOVIES_PER_PAGE } from "@/lib/constants";
 
 export async function GET(request: NextRequest) {
   // Apply Rate Limiting
@@ -34,17 +35,17 @@ export async function GET(request: NextRequest) {
           .from("v2_movies")
           .select(selectQuery)
           .order("created_at", { ascending: false })
-          .limit(8),
+          .limit(MOVIES_PER_PAGE),
         supabaseAdmin
           .from("v2_movies")
           .select(selectQuery)
           .order("year", { ascending: false })
-          .limit(8),
+          .limit(MOVIES_PER_PAGE),
         supabaseAdmin
           .from("v2_movies")
           .select(selectQuery)
           .order("jumpscare_count", { ascending: false })
-          .limit(8),
+          .limit(MOVIES_PER_PAGE),
       ]);
 
     if (
