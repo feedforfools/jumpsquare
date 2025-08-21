@@ -23,4 +23,4 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-Sitemap: https://jumpsquare.com/sitemap.xml
+Sitemap: https://heresthejump.com/sitemap.xml

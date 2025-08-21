@@ -7,7 +7,7 @@ export function Header() {
     <header className="border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-2xl font-bold text-red-600">
-          Jumpsquare
+          Here's the Jump!
         </Link>
         <nav className="flex items-center space-x-4">
           <ComingSoon

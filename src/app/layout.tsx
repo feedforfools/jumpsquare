@@ -8,7 +8,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Jumpsquare - Know When the Jumps Are Coming",
+  title: "Here's the Jump! - Know When the Jumps Are Coming",
   description:
     "The ultimate database of movie jumpscares. Watch horror movies with confidence or avoid the jumps entirely.",
   keywords: ["horror movies", "jumpscares", "movie database", "scary movies"],
