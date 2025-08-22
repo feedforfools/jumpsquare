@@ -10,9 +10,9 @@ interface MovieCardProps {
 
 export function MovieCard({ movie }: MovieCardProps) {
   const getIntensityColor = (count: number) => {
-    if (count <= 3) return "bg-green-100 text-green-800";
-    if (count <= 7) return "bg-yellow-100 text-yellow-800";
-    return "bg-red-100 text-red-800";
+    if (count <= 3) return "bg-jumpscare-mild-bg text-jumpscare-mild";
+    if (count <= 7) return "bg-jumpscare-moderate-bg text-jumpscare-moderate";
+    return "bg-jumpscare-intense-bg text-jumpscare-intense";
   };
 
   const getIntensityLabel = (count: number) => {
@@ -39,7 +39,7 @@ export function MovieCard({ movie }: MovieCardProps) {
 
   return (
     <Link href={`/movie/${movie.id}`}>
-      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full rounded-2xl">
         <CardHeader>
           <CardTitle className="min-w-0">
             <div className="flex items-start justify-between">
@@ -56,7 +56,7 @@ export function MovieCard({ movie }: MovieCardProps) {
               </Badge>
             </div>
           </CardTitle>
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <div className="flex items-center space-x-2 text-sm text-app-text-secondary">
             <span>{movie.year}</span>
             <span>•</span>
             <span>{getGenreDisplay()}</span>
@@ -71,7 +71,7 @@ export function MovieCard({ movie }: MovieCardProps) {
             )}
           </div>
           {movie.directors && movie.directors.length > 0 && (
-            <div className="flex items-center space-x-1 text-sm text-gray-600">
+            <div className="flex items-center space-x-1 text-sm text-app-text-secondary">
               <User className="h-3 w-3" />
               <span>{movie.directors.map((d) => d.name).join(", ")}</span>
             </div>
@@ -90,7 +90,7 @@ export function MovieCard({ movie }: MovieCardProps) {
             </Badge>
           </div>
           {movie.description && (
-            <p className="text-sm text-gray-600 line-clamp-2">
+            <p className="text-sm text-app-text-secondary line-clamp-2">
               {movie.description}
             </p>
           )}

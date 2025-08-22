@@ -73,31 +73,67 @@ export default function HomePage() {
   const isLoadingState = loading || isSearching;
   const showSearchResults = searchQuery.length >= 3;
 
+  // View selector component
+  const ViewSelector = () => (
+    <div className="flex items-center gap-1 p-1 border border-gray-800 rounded-2xl bg-app-surface">
+      {[
+        { key: "recent", label: "Recently Added", shortLabel: "Recent" },
+        {
+          key: "jumpscares",
+          label: "Most Jumpscares",
+          shortLabel: "Scares",
+        },
+        {
+          key: "highestRated",
+          label: "Highest Rated",
+          shortLabel: "Rated",
+        },
+      ].map((tab) => {
+        const active = view === (tab.key as any);
+        return (
+          <button
+            key={tab.key}
+            onClick={() => setView(tab.key as any)}
+            className={`px-2 py-1 text-xs font-medium rounded-xl transition-all duration-200 md:px-3 md:py-1.5 md:text-sm md:rounded-1xl ${
+              active
+                ? "bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white shadow-lg"
+                : "bg-app-surface text-app-text hover:text-brand-red hover:bg-brand-red-hover-light dark:hover:bg-brand-red-lighter"
+            }`}
+            aria-pressed={active}
+          >
+            <span className="hidden md:inline">{tab.label}</span>
+            <span className="md:hidden">{tab.shortLabel}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-app-surface">
       <Header />
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-red-100 to-white pb-12 pt-8">
+        <section className="bg-hero-gradient pb-8 pt-8">
           <div className="container mx-auto px-4 text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/70 backdrop-blur-sm border border-black text-red-600 text-xs md:text-sm font-medium mb-6">
-              <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
+            <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-app-surface backdrop-blur-sm border border-gray-800 text-brand-red text-xs md:text-sm font-medium mb-6">
+              <span className="w-2 h-2 bg-brand-red rounded-full animate-pulse"></span>
               The Ultimate Jumpscare Database
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
-              Know When the <span className="text-red-600">Jumps</span> Are
+              Know When the <span className="text-brand-red">Jumps</span> Are
               Coming
             </h1>
-            <p className="text-sm sm:text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-lg md:text-xl text-app-text-secondary mb-10 max-w-2xl mx-auto">
               Get precise timestamps, intensity levels, and descriptions for
               every jumpscare in thousands of movies.
             </p>
 
             <div className="relative group max-w-2xl mx-auto">
               {/* Search Bar Container */}
-              <div className="relative bg-white backdrop-blur-3xl rounded-3xl border border-gray-800 p-1">
+              <div className="relative bg-app-surface backdrop-blur-3xl rounded-3xl border border-gray-800 p-1">
                 <SearchBar
                   onSearch={handleSearch}
                   placeholder="Search for a movie..."
@@ -107,85 +143,75 @@ export default function HomePage() {
               </div>
             </div>
             {/* Popular Searches */}
-            <div className="mt-2 flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
-              <span className="text-gray-600">Popular:</span>
+            <div className="mt-4 flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
+              <span className="text-app-text-secondary">Popular:</span>
               <button
                 onClick={() => handleQuickSearch("The Conjuring")}
-                className="text-red-600 hover:text-red-300 transition-colors"
+                className="text-brand-red hover:text-brand-red-hover transition-colors"
               >
                 The Conjuring
               </button>
-              <span className="text-gray-600">•</span>
+              <span className="text-app-text-secondary">•</span>
               <button
                 onClick={() => handleQuickSearch("Hereditary")}
-                className="text-red-600 hover:text-red-300 transition-colors"
+                className="text-brand-red hover:text-brand-red-hover transition-colors"
               >
                 Hereditary
               </button>
-              <span className="text-gray-600">•</span>
+              <span className="text-app-text-secondary">•</span>
               <button
                 onClick={() => handleQuickSearch("A Quiet Place")}
-                className="text-red-600 hover:text-red-300 transition-colors"
+                className="text-brand-red hover:text-brand-red-hover transition-colors"
               >
                 A Quiet Place
               </button>
-              <span className="text-gray-600 hidden sm:inline">•</span>
+              <span className="text-app-text-secondary hidden sm:inline">
+                •
+              </span>
               <button
                 onClick={() => handleQuickSearch("Insidious")}
-                className="hidden sm:inline text-red-600 hover:text-red-300 transition-colors"
+                className="hidden sm:inline text-brand-red hover:text-brand-red-hover transition-colors"
               >
                 Insidious
               </button>
-            </div>
-            {/* View Selector: Recently Added / Most Jumpscares / Highest Rated */}
-            <div className="mt-6 flex justify-center gap-2">
-              {[
-                { key: "recent", label: "Recently Added" },
-                { key: "jumpscares", label: "Most Jumpscares" },
-                { key: "highestRated", label: "Highest Rated" },
-              ].map((tab) => {
-                const active = view === (tab.key as any);
-                return (
-                  <button
-                    key={tab.key}
-                    onClick={() => setView(tab.key as any)}
-                    className={`px-3 py-1 rounded-full text-sm font-medium transition ${
-                      active
-                        ? "bg-red-600 text-white"
-                        : "bg-white border border-gray-200 text-red-600"
-                    }`}
-                    aria-pressed={active}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
             </div>
           </div>
         </section>
 
         {/* Movies Section */}
-        <section id="movies-section" className="py-2">
+        <section id="movies-section" className="py-6 bg-app-surface">
           <div className="container mx-auto px-4 max-w-8xl">
             {isLoadingState ? (
-              <MovieGridSkeleton count={24} />
+              <>
+                {/* Loading state header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                  <div className="h-7 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse"></div>
+                  <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-72 animate-pulse"></div>
+                </div>
+                <MovieGridSkeleton count={24} />
+              </>
             ) : showSearchResults ? (
               <>
-                <h2 className="text-lg md:text-xl font-bold mb-5">
-                  Search Results for "{searchQuery}"
-                </h2>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                  <h2 className="text-lg md:text-xl font-bold">
+                    Search Results for "{searchQuery}"
+                  </h2>
+                </div>
                 <MovieGrid movies={searchResults} />
               </>
             ) : (
               discoverData && (
                 <div>
-                  <h2 className="text-lg md:text-xl font-bold mb-5">
-                    {view === "recent"
-                      ? "Recently Added"
-                      : view === "jumpscares"
-                      ? "Most Jumpscares"
-                      : "Highest Rated"}
-                  </h2>
+                  <div className="flex items-center justify-between gap-4 mb-4">
+                    <h2 className="text-lg md:text-xl font-bold flex-1 min-w-0">
+                      {view === "recent"
+                        ? "Recently Added"
+                        : view === "jumpscares"
+                        ? "Most Jumpscares"
+                        : "Highest Rated"}
+                    </h2>
+                    <ViewSelector />
+                  </div>
                   <MovieGrid
                     movies={
                       view === "recent"

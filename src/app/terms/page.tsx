@@ -27,68 +27,68 @@ import Link from "next/link";
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-app-surface">
       <Header />
 
-      <main className="flex-1 bg-gradient-to-b from-red-50 to-white">
+      <main className="flex-1 bg-hero-gradient">
         <div className="container mx-auto px-4 py-12 max-w-4xl">
           {/* Header Section */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center mb-4">
-              <Scale className="h-8 w-8 text-red-600 mr-2" />
+              <Scale className="h-8 w-8 text-brand-red mr-2" />
               <h1 className="text-4xl font-bold text-gray-900">
                 Terms of Service
               </h1>
             </div>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-app-text-secondary max-w-2xl mx-auto">
               Please read these terms carefully before using Here's the Jump. By
               accessing our website, you agree to be bound by these terms.
             </p>
-            <div className="mt-4 text-sm text-gray-500">
+            <div className="mt-4 text-sm text-app-text-secondary">
               <strong>Last Updated:</strong> August 2025
             </div>
           </div>
 
           {/* Quick Notice Cards */}
           <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <Card className="border-red-200 bg-red-50">
+            <Card className="border-brand-red-border bg-brand-red-light">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center text-red-800 text-sm">
+                <CardTitle className="flex items-center text-brand-red-hover text-sm">
                   <AlertTriangle className="h-4 w-4 mr-2" />
                   No Scraping
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-xs text-red-700">
+                <p className="text-xs text-brand-red-hover">
                   Automated data collection, scraping, or harvesting is strictly
                   prohibited.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-blue-200 bg-blue-50">
+            <Card className="border-blue-200 bg-jumpscare-low-bg">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center text-blue-800 text-sm">
+                <CardTitle className="flex items-center text-jumpscare-low text-sm">
                   <Database className="h-4 w-4 mr-2" />
                   Database Rights
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-xs text-blue-700">
+                <p className="text-xs text-jumpscare-low">
                   Our compiled database is protected intellectual property.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-green-200 bg-green-50">
+            <Card className="border-green-200 bg-jumpscare-mild-bg">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center text-green-800 text-sm">
+                <CardTitle className="flex items-center text-jumpscare-mild text-sm">
                   <Shield className="h-4 w-4 mr-2" />
                   Personal Use
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-xs text-green-700">
+                <p className="text-xs text-jumpscare-mild">
                   Content is provided for personal, non-commercial use only.
                 </p>
               </CardContent>
@@ -96,11 +96,11 @@ export default function TermsOfServicePage() {
           </div>
 
           {/* Main Terms Content */}
-          <Card className="mb-8">
+          <Card className="mb-8 bg-app-surface">
             <CardContent className="p-8">
               <div className="prose prose-gray max-w-none">
                 <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-                  <span className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center text-red-600 text-sm font-bold mr-3">
+                  <span className="bg-brand-red-lighter w-8 h-8 rounded-full flex items-center justify-center text-brand-red text-sm font-bold mr-3">
                     1
                   </span>
                   Acceptance of Terms
@@ -116,13 +116,13 @@ export default function TermsOfServicePage() {
                 <Separator className="my-8" />
 
                 <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-                  <span className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center text-red-600 text-sm font-bold mr-3">
+                  <span className="bg-brand-red-lighter w-8 h-8 rounded-full flex items-center justify-center text-brand-red text-sm font-bold mr-3">
                     2
                   </span>
                   Intellectual Property and Database Rights
                 </h2>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">
                   2.1 Database Compilation Rights
                 </h3>
                 <p className="mb-4 text-gray-700 leading-relaxed">
@@ -137,7 +137,7 @@ export default function TermsOfServicePage() {
                   rights and compilation copyright laws.
                 </p>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">
                   2.2 Proprietary Elements
                 </h3>
                 <p className="mb-4 text-gray-700 leading-relaxed">
@@ -157,13 +157,13 @@ export default function TermsOfServicePage() {
                 <Separator className="my-8" />
 
                 <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-                  <span className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center text-red-600 text-sm font-bold mr-3">
+                  <span className="bg-brand-red-lighter w-8 h-8 rounded-full flex items-center justify-center text-brand-red text-sm font-bold mr-3">
                     3
                   </span>
                   Prohibited Uses
                 </h2>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">
                   3.1 Automated Data Collection
                 </h3>
                 <p className="mb-4 text-gray-700 leading-relaxed">
@@ -190,7 +190,7 @@ export default function TermsOfServicePage() {
                   </li>
                 </ul>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">
                   3.2 Commercial Use Restrictions
                 </h3>
                 <p className="mb-4 text-gray-700 leading-relaxed">
@@ -204,7 +204,7 @@ export default function TermsOfServicePage() {
                   <li>Research purposes without explicit written permission</li>
                 </ul>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">
                   3.3 Technical Restrictions
                 </h3>
                 <p className="mb-4 text-gray-700 leading-relaxed">
@@ -222,7 +222,7 @@ export default function TermsOfServicePage() {
                 <Separator className="my-8" />
 
                 <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-                  <span className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center text-red-600 text-sm font-bold mr-3">
+                  <span className="bg-brand-red-lighter w-8 h-8 rounded-full flex items-center justify-center text-brand-red text-sm font-bold mr-3">
                     4
                   </span>
                   Permitted Uses
@@ -246,13 +246,13 @@ export default function TermsOfServicePage() {
                 <Separator className="my-8" />
 
                 <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-                  <span className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center text-red-600 text-sm font-bold mr-3">
+                  <span className="bg-brand-red-lighter w-8 h-8 rounded-full flex items-center justify-center text-brand-red text-sm font-bold mr-3">
                     5
                   </span>
                   Enforcement and Legal Remedies
                 </h2>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">
                   5.1 Violation Detection
                 </h3>
                 <p className="mb-4 text-gray-700 leading-relaxed">
@@ -267,7 +267,7 @@ export default function TermsOfServicePage() {
                   <li>Claims for attorney fees and costs</li>
                 </ul>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">
                   5.2 DMCA and Legal Process
                 </h3>
                 <p className="mb-4 text-gray-700 leading-relaxed">
@@ -280,7 +280,7 @@ export default function TermsOfServicePage() {
                 <Separator className="my-8" />
 
                 <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-                  <span className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center text-red-600 text-sm font-bold mr-3">
+                  <span className="bg-brand-red-lighter w-8 h-8 rounded-full flex items-center justify-center text-brand-red text-sm font-bold mr-3">
                     6
                   </span>
                   Disclaimer and Limitations
@@ -295,7 +295,7 @@ export default function TermsOfServicePage() {
                 <Separator className="my-8" />
 
                 <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-                  <span className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center text-red-600 text-sm font-bold mr-3">
+                  <span className="bg-brand-red-lighter w-8 h-8 rounded-full flex items-center justify-center text-brand-red text-sm font-bold mr-3">
                     7
                   </span>
                   Modifications and Governing Law
@@ -310,7 +310,7 @@ export default function TermsOfServicePage() {
                 <Separator className="my-8" />
 
                 <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-                  <span className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center text-red-600 text-sm font-bold mr-3">
+                  <span className="bg-brand-red-lighter w-8 h-8 rounded-full flex items-center justify-center text-brand-red text-sm font-bold mr-3">
                     8
                   </span>
                   Contact Information
@@ -320,7 +320,7 @@ export default function TermsOfServicePage() {
                   report violations, please{" "}
                   <Link
                     href="mailto:hello@feedforfools.com"
-                    className="text-red-600 hover:text-red-700 underline font-semibold"
+                    className="text-brand-red hover:text-brand-red-hover underline font-semibold"
                   >
                     contact us here
                   </Link>
@@ -337,7 +337,7 @@ export default function TermsOfServicePage() {
           {/* Footer Actions */}
           <div className="text-center">
             <Link href="/">
-              <Button className="bg-red-600 hover:bg-red-700 text-white">
+              <Button className="bg-brand-red hover:bg-brand-red-hover text-white">
                 I Understand - Back to Here's the Jump
               </Button>
             </Link>

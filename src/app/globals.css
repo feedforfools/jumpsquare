@@ -2,11 +2,17 @@
 @import "tw-animate-css";
 @tailwind utilities;
 
+@variant dark (&:is(.dark, .dark *));
+
 @layer base {
   body {
     min-width: 375px;
   }
+}
+
+@layer theme {
   :root {
+    /* === Core UI System (Shadcn/UI) === */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -27,10 +33,121 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
+
+    /* === App-Specific Brand Colors === */
+    --brand-red: 0 65% 51%;           /* red-600 equivalent */
+    --brand-red-hover: 0 84% 42%;     /* red-700 equivalent */
+    --brand-red-hover-light: 0 50% 98%;/* red-50 equivalent */
+    --brand-red-hero: 0 92% 93%;      /* red-100 for hero equivalent */
+    --brand-red-light: 0 60% 96%;     /* red-100 equivalent */
+    --brand-red-lighter: 0 84% 93%;   /* red-100 equivalent */
+    --brand-red-border: 0 50% 90%;    /* red-200 equivalent */
+
+    /* === Gray Scale System === */
+    --gray-50: 210 20% 98%;
+    --gray-100: 210 20% 95%;
+    --gray-200: 210 16% 93%;
+    --gray-300: 210 14% 89%;
+    --gray-400: 210 14% 83%;
+    --gray-500: 210 11% 71%;
+    --gray-600: 210 7% 56%;
+    --gray-700: 210 9% 31%;
+    --gray-800: 210 10% 23%;
+    --gray-900: 210 11% 15%;
+
+    /* === Semantic App Colors === */
+    --app-surface: var(--background);
+    --app-surface-secondary: var(--gray-50);
+    --app-text: var(--foreground);
+    --app-text-secondary: var(--gray-700);
+    --app-text-muted: var(--gray-600);
+    
+    /* === Hero Gradient === */
+    --hero-gradient-from: var(--brand-red-hero);
+    --hero-gradient-to: var(--background);
+    
+    /* === Jumpscare Intensity Colors === */
+    --jumpscare-low: 226 71% 40%;         /* blue-800 */
+    --jumpscare-low-bg: 214 95% 93%;      /* blue-100 */
+    --jumpscare-mild: 143 60% 24%;        /* green-800 */
+    --jumpscare-mild-bg: 149 80% 90%;     /* green-100 */
+    --jumpscare-moderate: 23 83% 31%;     /* yellow-800 */
+    --jumpscare-moderate-bg: 48 96% 89%;  /* yellow-100 */
+    --jumpscare-strong: 15 79% 34%;       /* orange-800 */
+    --jumpscare-strong-bg: 34 100% 92%;   /* orange-100 */
+    --jumpscare-intense: 0 70% 35%;       /* red-800 */
+    --jumpscare-intense-bg: 0 93% 94%;    /* red-100 */
+  }
+
+  /* Dark Theme Overrides */
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    /* === App-Specific Dark Colors === */
+    --brand-red: 0 72% 58%;           /* Slightly brighter red for dark mode */
+    --brand-red-hover: 0 72% 52%;     
+    --brand-red-hero: 0 92% 13%;      /* red-100 for hero equivalent */
+    --brand-red-light: 0 72% 8%;      /* Very dark red background */
+    --brand-red-lighter: 0 72% 12%;   
+    --brand-red-border: 0 72% 20%;    
+
+    /* === Dark Gray Scale === */
+    --gray-50: 217.2 32.6% 17.5%;
+    --gray-100: 217.2 32.6% 20%;
+    --gray-200: 217.2 32.6% 25%;
+    --gray-300: 217.2 32.6% 35%;
+    --gray-400: 217.2 32.6% 45%;
+    --gray-500: 215 20.2% 65.1%;
+    --gray-600: 210 40% 80%;
+    --gray-700: 210 40% 85%;
+    --gray-800: 210 40% 90%;
+    --gray-900: 210 40% 95%;
+
+    /* === Dark Semantic Colors === */
+    --app-surface: var(--background);
+    --app-surface-secondary: var(--gray-50);
+    --app-text: var(--foreground);
+    --app-text-secondary: var(--gray-600);
+    --app-text-muted: var(--gray-500);
+
+    /* === Dark Hero Gradient === */
+    --hero-gradient-from: var(--brand-red-hero);
+    --hero-gradient-to: var(--background);
+    
+    /* === Dark Jumpscare Colors === */
+    --jumpscare-low: 226 71% 60%;         /* Brighter blue for dark mode */
+    --jumpscare-low-bg: 226 71% 15%;      /* Dark blue background */
+    --jumpscare-mild: 142 50% 58%;        /* Brighter green */
+    --jumpscare-mild-bg: 142 50% 15%;     /* Dark green background */
+    --jumpscare-moderate: 45 70% 65%;     /* Brighter yellow */
+    --jumpscare-moderate-bg: 45 70% 15%;  /* Dark yellow background */
+    --jumpscare-strong: 15 79% 55%;       /* Brighter orange for dark mode */
+    --jumpscare-strong-bg: 15 79% 15%;    /* Dark orange background */
+    --jumpscare-intense: var(--brand-red);        /* Use brand red */
+    --jumpscare-intense-bg: var(--brand-red-lighter);  /* Use brand red bg */
   }
 }
 
 @layer utilities {
+  /* Line clamping utilities */
   .line-clamp-2 {
     overflow: hidden;
     display: -webkit-box;
@@ -45,6 +162,7 @@
     -webkit-line-clamp: 3;
   }
   
+  /* Animation keyframes and classes */
   @keyframes breathing {
     0%, 100% {
       transform: scale(1);
@@ -62,5 +180,163 @@
     100% {
       transform: translateX(100%);
     }
+  }
+
+  /* Text stroke utilities for header title */
+  .text-stroke-black {
+    -webkit-text-stroke: 1px hsl(var(--gray-900));
+    text-stroke: 1px hsl(var(--gray-900));
+    paint-order: stroke fill;
+  }
+  
+  .text-stroke-white {
+    -webkit-text-stroke: 1px hsl(var(--gray-100));
+    text-stroke: 1px hsl(var(--gray-100)); 
+    paint-order: stroke fill;
+  }
+
+  /* Theme-aware background utilities */
+  .bg-hero-gradient {
+    background: linear-gradient(to bottom, hsl(var(--hero-gradient-from)), hsl(var(--hero-gradient-to)));
+  }
+  
+  .bg-app-surface {
+    background-color: hsl(var(--app-surface));
+  }
+  
+  .bg-app-surface-secondary {
+    background-color: hsl(var(--app-surface-secondary));
+  }
+  
+  /* Theme-aware text utilities */
+  .text-app-text {
+    color: hsl(var(--app-text));
+  }
+  
+  .text-app-text-secondary {
+    color: hsl(var(--app-text-secondary));
+  }
+  
+  .text-app-text-muted {
+    color: hsl(var(--app-text-muted));
+  }
+  
+  /* Brand color utilities */
+  .bg-brand-red {
+    background-color: hsl(var(--brand-red));
+  }
+  
+  .bg-brand-red-light {
+    background-color: hsl(var(--brand-red-light));
+  }
+  
+  .bg-brand-red-lighter {
+    background-color: hsl(var(--brand-red-lighter));
+  }
+  
+  .text-brand-red {
+    color: hsl(var(--brand-red));
+  }
+  
+  .border-brand-red-border {
+    border-color: hsl(var(--brand-red-border));
+  }
+  
+  .hover\:bg-brand-red-hover:hover {
+    background-color: hsl(var(--brand-red-hover));
+  }
+
+  .hover\:bg-brand-red-hover-light:hover {
+    background-color: hsl(var(--brand-red-hover-light));
+  }
+
+  .hover\:text-brand-red:hover {
+    color: hsl(var(--brand-red));
+  }
+
+  /* Jumpscare intensity utilities */
+  .bg-jumpscare-low {
+    background-color: hsl(var(--jumpscare-low));
+  }
+  
+  .bg-jumpscare-low-bg {
+    background-color: hsl(var(--jumpscare-low-bg));
+  }
+  
+  .text-jumpscare-low {
+    color: hsl(var(--jumpscare-low));
+  }
+  
+  .bg-jumpscare-mild {
+    background-color: hsl(var(--jumpscare-mild));
+  }
+  
+  .bg-jumpscare-mild-bg {
+    background-color: hsl(var(--jumpscare-mild-bg));
+  }
+  
+  .text-jumpscare-mild {
+    color: hsl(var(--jumpscare-mild));
+  }
+  
+  .bg-jumpscare-moderate {
+    background-color: hsl(var(--jumpscare-moderate));
+  }
+  
+  .bg-jumpscare-moderate-bg {
+    background-color: hsl(var(--jumpscare-moderate-bg));
+  }
+  
+  .text-jumpscare-moderate {
+    color: hsl(var(--jumpscare-moderate));
+  }
+  
+  .bg-jumpscare-strong {
+    background-color: hsl(var(--jumpscare-strong));
+  }
+  
+  .bg-jumpscare-strong-bg {
+    background-color: hsl(var(--jumpscare-strong-bg));
+  }
+  
+  .text-jumpscare-strong {
+    color: hsl(var(--jumpscare-strong));
+  }
+  
+  .bg-jumpscare-intense {
+    background-color: hsl(var(--jumpscare-intense));
+  }
+  
+  .bg-jumpscare-intense-bg {
+    background-color: hsl(var(--jumpscare-intense-bg));
+  }
+  
+  .text-jumpscare-intense {
+    color: hsl(var(--jumpscare-intense));
+  }
+
+  /* Gray scale utilities - only the most commonly used ones */
+  .text-gray-500 {
+    color: hsl(var(--gray-500));
+  }
+  
+  .text-gray-700 {
+    color: hsl(var(--gray-700));
+  }
+  
+  .text-gray-900 {
+    color: hsl(var(--gray-900));
+  }
+  
+  .bg-gray-100 {
+    background-color: hsl(var(--gray-100));
+  }
+  
+  .border-gray-200 {
+    border-color: hsl(var(--gray-200));
+  }
+  
+  .border-gray-800 {
+    border-color: hsl(var(--gray-800));
   }
 }

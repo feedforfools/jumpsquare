@@ -48,13 +48,13 @@ export function SearchBar({
           placeholder={placeholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="flex-1 bg-transparent text-black placeholder-gray-500 px-5 py-1 md:py-2 text-sm md:text-lg focus:outline-none"
+          className="flex-1 bg-transparent text-app-text placeholder-gray-500 px-5 py-1 md:py-2 text-sm md:text-lg focus:outline-none"
         />
         {query && (
           <Button
             type="button"
             onClick={handleClear}
-            className="text-black hover:text-gray-600 mr-1 p-1 h-6 md:h-9 transition-all transform hover:scale-105 active:scale-95 bg-transparent border-0 shadow-none"
+            className="text-app-text hover:text-app-text-secondary mr-1 p-1 h-6 md:h-9 transition-all transform hover:scale-105 active:scale-95 bg-transparent border-0 shadow-none"
           >
             <X className="h-3 w-3 md:h-4 md:w-4" />
           </Button>
@@ -86,7 +86,7 @@ export function SearchBar({
         <Button
           type="button"
           onClick={handleClear}
-          className="text-gray-500 hover:text-gray-700 p-1 h-auto w-auto bg-transparent border-0 shadow-none"
+          className="text-app-text-muted hover:text-gray-700 p-1 h-auto w-auto bg-transparent border-0 shadow-none"
         >
           <X className="h-4 w-4" />
         </Button>

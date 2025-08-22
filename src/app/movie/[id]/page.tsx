@@ -109,7 +109,7 @@ export default function MovieDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-app-surface">
         <Header />
         <main className="flex-1 container mx-auto px-4 py-8">
           {/* Back Button */}
@@ -133,14 +133,14 @@ export default function MovieDetailPage() {
 
   if (error || !movie) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-app-surface">
         <Header />
         <main className="flex-1 container mx-auto px-4 py-12">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">
               {error || "Movie Not Found"}
             </h1>
-            <p className="text-gray-600 mb-8">
+            <p className="text-app-text-secondary mb-8">
               {error === "Movie not found"
                 ? "The movie you're looking for doesn't exist in our database."
                 : "Something went wrong while loading the movie data."}
@@ -161,11 +161,20 @@ export default function MovieDetailPage() {
   }
 
   const getIntensityLevel = (count: number) => {
-    if (count <= 3)
-      return { label: "Mild", color: "bg-green-100 text-green-800" };
+    if (count <= 4)
+      return {
+        label: "Mild",
+        color: "bg-jumpscare-mild-bg text-jumpscare-mild",
+      };
     if (count <= 7)
-      return { label: "Moderate", color: "bg-yellow-100 text-yellow-800" };
-    return { label: "Intense", color: "bg-red-100 text-red-800" };
+      return {
+        label: "Moderate",
+        color: "bg-jumpscare-moderate-bg text-jumpscare-moderate",
+      };
+    return {
+      label: "Intense",
+      color: "bg-jumpscare-intense-bg text-jumpscare-intense",
+    };
   };
 
   const intensityLevel = getIntensityLevel(movie.jumpscare_count);
@@ -179,12 +188,12 @@ export default function MovieDetailPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-app-surface">
       <Header />
 
       <main className="flex-1">
         {/* Add gradient background section */}
-        <section className="bg-gradient-to-b from-red-100 to-white pb-8 pt-8">
+        <section className="bg-hero-gradient pb-8 pt-8">
           <div className="container mx-auto px-4">
             {/* Back Button */}
             <div className="mb-6">
@@ -210,14 +219,18 @@ export default function MovieDetailPage() {
                       <Calendar className="h-4 w-4 text-gray-900" />
                       <span>{movie.year}</span>
                     </div>
-                    <Badge variant="outline">{movie.rating}</Badge>
-                    <Badge variant="outline">{getGenreDisplay()}</Badge>
+                    <Badge variant="outline" className="bg-app-surface">
+                      {movie.rating}
+                    </Badge>
+                    <Badge variant="outline" className="bg-app-surface">
+                      {getGenreDisplay()}
+                    </Badge>
                     {movie.runtime_minutes && (
                       <div className="flex items-center space-x-2">
                         <Clock className="h-4 w-4 text-gray-900" />
                         <button
                           onClick={toggleTimeFormat}
-                          className="hover:text-red-600 transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
+                          className="hover:text-brand-red transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
                           title="Click to toggle time format"
                         >
                           {formatMovieDuration(movie.runtime_minutes)}
@@ -246,7 +259,7 @@ export default function MovieDetailPage() {
                 </div>
 
                 {/* Stats Card */}
-                <Card className="lg:w-90 bg-white">
+                <Card className="lg:w-90 bg-app-surface">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <Zap className="h-5 w-5 text-yellow-500" />
@@ -274,7 +287,7 @@ export default function MovieDetailPage() {
 
                     <Separator />
 
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-app-text-secondary">
                       <p className="mb-2">
                         <strong>Tip:</strong> Use the timeline below to know
                         exactly when jumpscares occur.
@@ -283,7 +296,7 @@ export default function MovieDetailPage() {
                         Times are approximate and may vary by version/cut of the
                         film.
                       </p>
-                      <p className="text-xs mt-2 text-gray-500">
+                      <p className="text-xs mt-2 text-app-text-muted">
                         💡 Click on any timestamp to toggle time format
                       </p>
                     </div>
@@ -295,8 +308,8 @@ export default function MovieDetailPage() {
         </section>
 
         {/* Rest of the content with white background */}
-        <section className="bg-white">
-          <div className="container mx-auto px-4">
+        <section className="bg-app-surface flex-1 min-h-0">
+          <div className="container mx-auto px-4 pb-8">
             {/* Jumpscare Timeline */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-6">

@@ -87,7 +87,7 @@ export function ComingSoon({
 
       {/* Optional subtle overlay effect */}
       {disabled && (
-        <div className="absolute inset-0 rounded-md bg-gray-50/5 pointer-events-none" />
+        <div className="absolute inset-0 rounded-md bg-app-surface-secondary/5 pointer-events-none" />
       )}
     </div>
   );

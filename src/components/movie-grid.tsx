@@ -30,7 +30,7 @@ export function MovieGrid({ movies }: MovieGridProps) {
   if (movies.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-gray-600">
+        <p className="text-app-text-secondary">
           No movies found. Try a different search term.
         </p>
       </div>

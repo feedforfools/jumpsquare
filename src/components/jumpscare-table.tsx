@@ -22,20 +22,21 @@ export function JumpscareTable({
   onTimestampClick,
 }: JumpscareTableProps) {
   const getIntensityColor = (intensity: number) => {
-    if (intensity <= 3) return "bg-green-100 text-green-800";
-    if (intensity <= 6) return "bg-yellow-100 text-yellow-800";
-    if (intensity <= 8) return "bg-orange-100 text-orange-800";
-    return "bg-red-100 text-red-800";
+    if (intensity <= 3) return "bg-jumpscare-low-bg text-jumpscare-low";
+    if (intensity <= 6)
+      return "bg-jumpscare-moderate-bg text-jumpscare-moderate";
+    if (intensity <= 8) return "bg-jumpscare-strong-bg text-jumpscare-strong";
+    return "bg-jumpscare-intense-bg text-jumpscare-intense";
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "major":
-        return "bg-red-100 text-red-800";
+        return "bg-jumpscare-intense-bg text-jumpscare-intense";
       case "minor":
-        return "bg-blue-100 text-blue-800";
+        return "bg-jumpscare-low-bg text-jumpscare-low";
       case "false_alarm":
-        return "bg-gray-100 text-gray-800";
+        return "bg-jumpscare-mild-bg text-jumpscare-mild";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -65,7 +66,7 @@ export function JumpscareTable({
 
   if (jumpscares.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-app-text-muted">
         <Zap className="h-12 w-12 mx-auto mb-4 text-gray-300" />
         <p>No jumpscares recorded for this movie yet.</p>
       </div>
@@ -89,7 +90,7 @@ export function JumpscareTable({
               <TableCell className="font-mono">
                 <button
                   onClick={onTimestampClick}
-                  className="hover:text-red-600 transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
+                  className="hover:text-brand-red transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
                   title="Click to toggle time format"
                 >
                   {timestampFormatter(
