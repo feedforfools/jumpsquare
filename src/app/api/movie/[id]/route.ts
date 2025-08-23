@@ -1,9 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin, detailRateLimit } from "@/lib/server-utils";
 
+// Define types for the database relations
+interface MovieDirectorRelation {
+  v2_directors: {
+    id: string;
+    name: string;
+  };
+}
+
+interface MovieGenreRelation {
+  v2_genres: {
+    id: string;
+    name: string;
+  };
+}
+
+interface MovieWithRelations {
+  id: string;
+  title: string;
+  year: number;
+  genre: string;
+  rating: string;
+  jumpscare_count: number;
+  poster_url?: string;
+  description?: string;
+  runtime_minutes?: number;
+  v2_movie_directors: MovieDirectorRelation[];
+  v2_movie_genres: MovieGenreRelation[];
+}
+
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const ip = request.headers.get("x-real-ip") ?? "127.0.0.1";
   const { success, limit, remaining, reset } = await detailRateLimit.limit(ip);
@@ -47,17 +76,19 @@ export async function GET(
       return NextResponse.json({ error: "Movie not found" }, { status: 404 });
     }
 
+    // Type the data as MovieWithRelations
+    const movieData = data as MovieWithRelations;
+
     const transformedMovie = {
-      ...data,
-      directors: data.v2_movie_directors.map((md: any) => md.v2_directors),
-      genres: data.v2_movie_genres.map((mg: any) => mg.v2_genres),
+      ...movieData,
+      directors: movieData.v2_movie_directors.map((md) => md.v2_directors),
+      genres: movieData.v2_movie_genres.map((mg) => mg.v2_genres),
     };
 
     return NextResponse.json(transformedMovie, { headers });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500, headers }
-    );
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "An unexpected error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500, headers });
   }
 }

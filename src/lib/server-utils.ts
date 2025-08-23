@@ -32,8 +32,35 @@ export const detailRateLimit = new Ratelimit({
   prefix: "@upstash/ratelimit_jumpsquare_detail",
 });
 
+// Define types for the database relations
+interface MovieDirectorRelation {
+  v2_directors: {
+    id: string;
+    name: string;
+  };
+}
+
+interface MovieGenreRelation {
+  v2_genres: {
+    id: string;
+    name: string;
+  };
+}
+
+interface MovieWithRelations {
+  id: string;
+  title: string;
+  year: number;
+  rating: string;
+  jumpscare_count: number;
+  runtime_minutes?: number;
+  description?: string;
+  v2_movie_directors?: MovieDirectorRelation[];
+  v2_movie_genres?: MovieGenreRelation[];
+}
+
 // Helper function to transform movie data for card displays
-export const transformMovieForCard = (movie: any) => {
+export const transformMovieForCard = (movie: MovieWithRelations | null) => {
   if (!movie) return null;
   return {
     id: movie.id,
@@ -44,9 +71,12 @@ export const transformMovieForCard = (movie: any) => {
     runtime_minutes: movie.runtime_minutes,
     description: movie.description,
     directors:
-      movie.v2_movie_directors?.slice(0, 2).map((md: any) => md.v2_directors) ||
-      [],
+      movie.v2_movie_directors
+        ?.slice(0, 2)
+        .map((md: MovieDirectorRelation) => md.v2_directors) || [],
     genres:
-      movie.v2_movie_genres?.slice(0, 2).map((mg: any) => mg.v2_genres) || [],
+      movie.v2_movie_genres
+        ?.slice(0, 2)
+        .map((mg: MovieGenreRelation) => mg.v2_genres) || [],
   };
 };

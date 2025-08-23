@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { JumpscareTable } from "@/components/jumpscare-table";
@@ -31,6 +31,7 @@ export default function MovieDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [useExtendedTimeFormat, setUseExtendedTimeFormat] = useState(false);
+  const hasLoadedRef = useRef(false);
 
   // Helper function to format movie duration
   const formatMovieDuration = (minutes: number) => {
@@ -70,17 +71,23 @@ export default function MovieDetailPage() {
   };
 
   useEffect(() => {
-    const loadMovieData = async () => {
-      if (!movieId) return;
+    // Skip if we've already loaded the data
+    if (hasLoadedRef.current) return;
+    if (!movieId) return;
 
+    const abortController = new AbortController();
+
+    const loadMovieData = async () => {
       setLoading(true);
       setError(null);
 
       try {
         // Fetch both movie details and jumpscares from our new APIs in parallel
         const [movieRes, jumpscaresRes] = await Promise.all([
-          fetch(`/api/movie/${movieId}`),
-          fetch(`/api/movie/${movieId}/jumpscares`),
+          fetch(`/api/movie/${movieId}`, { signal: abortController.signal }),
+          fetch(`/api/movie/${movieId}/jumpscares`, {
+            signal: abortController.signal,
+          }),
         ]);
 
         if (!movieRes.ok) {
@@ -94,18 +101,32 @@ export default function MovieDetailPage() {
         const movieData = await movieRes.json();
         const jumpscareData = await jumpscaresRes.json();
 
-        setMovie(movieData);
-        setJumpscares(jumpscareData);
-      } catch (err: any) {
-        console.error("Error loading movie data:", err);
-        setError(err.message || "Failed to load movie data");
+        // Only update state if we haven't been aborted
+        if (!abortController.signal.aborted) {
+          setMovie(movieData);
+          setJumpscares(jumpscareData);
+          hasLoadedRef.current = true; // Mark as loaded
+        }
+      } catch (err: unknown) {
+        // Only handle non-abort errors
+        if (err instanceof Error && err.name !== "AbortError") {
+          console.error("Error loading movie data:", err);
+          setError(err.message || "Failed to load movie data");
+        }
       } finally {
-        setLoading(false);
+        if (!abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadMovieData();
-  }, [movieId]);
+
+    // Cleanup function to abort requests
+    return () => {
+      abortController.abort();
+    };
+  }, [movieId]); // Only re-run if movieId changes
 
   if (loading) {
     return (

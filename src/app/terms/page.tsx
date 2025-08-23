@@ -41,8 +41,9 @@ export default function TermsOfServicePage() {
               </h1>
             </div>
             <p className="text-lg text-app-text-secondary max-w-2xl mx-auto">
-              Please read these terms carefully before using Here's the Jump. By
-              accessing our website, you agree to be bound by these terms.
+              Please read these terms carefully before using Here&apos;s the
+              Jump. By accessing our website, you agree to be bound by these
+              terms.
             </p>
             <div className="mt-4 text-sm text-app-text-secondary">
               <strong>Last Updated:</strong> August 2025
@@ -106,8 +107,8 @@ export default function TermsOfServicePage() {
                   Acceptance of Terms
                 </h2>
                 <p className="mb-6 text-gray-700 leading-relaxed">
-                  By accessing, browsing, or using Here's the Jump (&quot;the
-                  Service&quot;), you acknowledge that you have read,
+                  By accessing, browsing, or using Here&apos;s the Jump
+                  (&quot;the Service&quot;), you acknowledge that you have read,
                   understood, and agree to be bound by these Terms of Service
                   and our Privacy Policy. If you do not agree to these terms,
                   you must not use our Service.
@@ -338,7 +339,7 @@ export default function TermsOfServicePage() {
           <div className="text-center">
             <Link href="/">
               <Button className="bg-brand-red hover:bg-brand-red-hover text-white">
-                I Understand - Back to Here's the Jump
+                I Understand - Back to Here&apos;s the Jump
               </Button>
             </Link>
           </div>

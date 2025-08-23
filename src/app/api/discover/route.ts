@@ -69,10 +69,9 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(discoverData, { headers });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500, headers }
-    );
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "An unexpected error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500, headers });
   }
 }

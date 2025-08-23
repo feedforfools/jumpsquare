@@ -3,7 +3,7 @@ import { supabaseAdmin, detailRateLimit } from "@/lib/server-utils";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const ip = request.headers.get("x-real-ip") ?? "127.0.0.1";
   const { success, limit, remaining, reset } = await detailRateLimit.limit(ip);
@@ -39,10 +39,9 @@ export async function GET(
     if (error) throw error;
 
     return NextResponse.json(data || [], { headers });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500, headers }
-    );
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "An unexpected error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500, headers });
   }
 }

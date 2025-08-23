@@ -29,22 +29,38 @@ export default function HomePage() {
 
   // Fetch initial discovery data for the homepage
   useEffect(() => {
+    const abortController = new AbortController();
+
     const fetchDiscoverData = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/discover");
+        const response = await fetch("/api/discover", {
+          signal: abortController.signal,
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch");
+
         const data: DiscoverResponse = await response.json();
         setDiscoverData(data);
-      } catch (error) {
-        console.error("Failed to fetch discovery data:", error);
+      } catch (error: unknown) {
+        // Only log errors if they're not abort errors
+        if (error instanceof Error && error.name !== "AbortError") {
+          console.error("Failed to fetch discovery data:", error);
+        }
       } finally {
         setLoading(false);
       }
     };
-    fetchDiscoverData();
-  }, []);
 
-  // Handle a new search
+    fetchDiscoverData();
+
+    // Cleanup function to abort the request if component unmounts
+    return () => {
+      abortController.abort();
+    };
+  }, []); // Empty dependency array - only run once
+
+  // Handle a new search with AbortController
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
     if (!query || query.length < 3) {
@@ -54,13 +70,24 @@ export default function HomePage() {
     }
 
     setIsSearching(true);
+
+    // Create an AbortController for this search
+    const abortController = new AbortController();
+
     try {
       const params = new URLSearchParams({ query });
-      const response = await fetch(`/api/search?${params.toString()}`);
+      const response = await fetch(`/api/search?${params.toString()}`, {
+        signal: abortController.signal,
+      });
+
+      if (!response.ok) throw new Error("Search failed");
+
       const data = await response.json();
       setSearchResults(data.movies || []);
-    } catch (error) {
-      console.error("Failed to fetch search data:", error);
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name !== "AbortError") {
+        console.error("Failed to fetch search data:", error);
+      }
     } finally {
       setIsSearching(false);
     }
@@ -89,11 +116,14 @@ export default function HomePage() {
           shortLabel: "Rated",
         },
       ].map((tab) => {
-        const active = view === (tab.key as any);
+        const active =
+          view === (tab.key as "recent" | "jumpscares" | "highestRated");
         return (
           <button
             key={tab.key}
-            onClick={() => setView(tab.key as any)}
+            onClick={() =>
+              setView(tab.key as "recent" | "jumpscares" | "highestRated")
+            }
             className={`px-2 py-1 text-xs font-medium rounded-xl transition-all duration-200 md:px-3 md:py-1.5 md:text-sm md:rounded-1xl ${
               active
                 ? "bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white shadow-lg"
@@ -115,7 +145,7 @@ export default function HomePage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-hero-gradient pb-8 pt-8">
+        <section className="bg-hero-gradient pb-10 pt-12">
           <div className="container mx-auto px-4 text-center">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-app-surface backdrop-blur-sm border border-gray-800 text-brand-red text-xs md:text-sm font-medium mb-6">
@@ -143,7 +173,7 @@ export default function HomePage() {
               </div>
             </div>
             {/* Popular Searches */}
-            <div className="mt-4 flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
+            <div className="mt-2 flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
               <span className="text-app-text-secondary">Popular:</span>
               <button
                 onClick={() => handleQuickSearch("The Conjuring")}
@@ -194,7 +224,7 @@ export default function HomePage() {
               <>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                   <h2 className="text-lg md:text-xl font-bold">
-                    Search Results for "{searchQuery}"
+                    Search Results for {searchQuery}
                   </h2>
                 </div>
                 <MovieGrid movies={searchResults} />
