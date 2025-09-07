@@ -98,12 +98,12 @@ export default function HomePage() {
   const showSearchResults = searchQuery.length >= 3;
 
   return (
-    <div className="min-h-screen flex flex-col bg-app-surface">
+    <div className="min-h-screen flex flex-col bg-app-surface bg-dot-pattern">
       <Header />
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-hero-gradient pb-8 pt-12">
+        <section className="pb-8 pt-12">
           <div className="container mx-auto px-4 text-center">
             {/* Badge
             <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-app-surface backdrop-blur-sm border-2 border-gray-800 text-brand-red text-xs md:text-sm font-medium mb-6">
@@ -168,7 +168,7 @@ export default function HomePage() {
         </section>
 
         {/* Movies Section */}
-        <section id="movies-section" className="py-6 bg-app-surface">
+        <section id="movies-section" className="py-6">
           <div className="container mx-auto px-4 max-w-8xl">
             {isLoadingState ? (
               <>

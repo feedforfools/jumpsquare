@@ -27,10 +27,10 @@ import Link from "next/link";
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-app-surface">
+    <div className="min-h-screen flex flex-col bg-app-surface bg-dot-pattern">
       <Header />
 
-      <main className="flex-1 bg-hero-gradient">
+      <main className="flex-1">
         <div className="container mx-auto px-4 py-12 max-w-4xl">
           {/* Header Section */}
           <div className="text-center mb-12">

@@ -198,12 +198,12 @@ export default function MovieDetailPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-app-surface">
+    <div className="min-h-screen flex flex-col bg-app-surface bg-dot-pattern">
       <Header />
 
       <main className="flex-1">
         {/* Add gradient background section */}
-        <section className="bg-hero-gradient pb-8 pt-8">
+        <section className="pb-8 pt-8">
           <div className="container mx-auto px-4">
             {/* Back Button */}
             <div className="mb-6">
@@ -316,7 +316,7 @@ export default function MovieDetailPage() {
         </section>
 
         {/* Rest of the content with white background */}
-        <section className="bg-app-surface flex-1 min-h-0">
+        <section className="flex-1 min-h-0">
           <div className="container mx-auto px-4 pb-8">
             {/* Jumpscare Timeline */}
             <div className="mb-8">
