@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ComingSoon } from "@/components/ui/coming-soon";
+// import { ComingSoon } from "@/components/ui/coming-soon";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
