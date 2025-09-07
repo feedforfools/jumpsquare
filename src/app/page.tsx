@@ -8,6 +8,7 @@ import { SearchBar } from "@/components/search-bar";
 import { MovieGrid } from "@/components/movie-grid";
 import { MovieGridSkeleton } from "@/components/movie-grid-skeleton";
 import { Movie } from "@/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface DiscoverResponse {
   recentlyAdded: Movie[];
@@ -23,10 +24,6 @@ export default function HomePage() {
   );
   const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
-
-  const [view, setView] = useState<"recent" | "jumpscares" | "highestRated">(
-    "recent"
-  );
 
   // Fetch initial discovery data for the homepage
   useEffect(() => {
@@ -100,42 +97,6 @@ export default function HomePage() {
 
   const isLoadingState = loading || isSearching;
   const showSearchResults = searchQuery.length >= 3;
-
-  // View selector component
-  const ViewSelector = () => (
-    <div className="flex items-center gap-1 p-1 bg-app-surface">
-      {[
-        { key: "recent", label: "Recently Added", shortLabel: "Recent" },
-        {
-          key: "jumpscares",
-          label: "Most Jumpscares",
-          shortLabel: "Scares",
-        },
-        {
-          key: "highestRated",
-          label: "Highest Rated",
-          shortLabel: "Rated",
-        },
-      ].map((tab) => {
-        const active =
-          view === (tab.key as "recent" | "jumpscares" | "highestRated");
-        return (
-          <Button
-            key={tab.key}
-            onClick={() =>
-              setView(tab.key as "recent" | "jumpscares" | "highestRated")
-            }
-            variant={active ? "default" : "neutral"}
-            size="sm"
-            aria-pressed={active}
-          >
-            <span className="hidden md:inline">{tab.label}</span>
-            <span className="md:hidden">{tab.shortLabel}</span>
-          </Button>
-        );
-      })}
-    </div>
-  );
 
   return (
     <div className="min-h-screen flex flex-col bg-app-surface">
@@ -229,27 +190,36 @@ export default function HomePage() {
               </>
             ) : (
               discoverData && (
-                <div>
+                <Tabs defaultValue="recent" className="w-full">
                   <div className="flex items-center justify-between gap-4 mb-4">
-                    <h2 className="text-lg md:text-xl font-bold flex-1 min-w-0">
-                      {view === "recent"
-                        ? "Recently Added"
-                        : view === "jumpscares"
-                        ? "Most Jumpscares"
-                        : "Highest Rated"}
+                    <h2 className="text-lg md:text-xl font-bold">
+                      Discover Movies
                     </h2>
-                    <ViewSelector />
+                    <TabsList size="sm">
+                      <TabsTrigger value="recent" size="sm">
+                        <span className="sm:hidden">New</span>
+                        <span className="hidden sm:inline">Recently Added</span>
+                      </TabsTrigger>
+                      <TabsTrigger value="jumpscares" size="sm">
+                        <span className="sm:hidden">Scary</span>
+                        <span className="hidden sm:inline">Most Scares</span>
+                      </TabsTrigger>
+                      <TabsTrigger value="highestRated" size="sm">
+                        <span className="sm:hidden">Top</span>
+                        <span className="hidden sm:inline">Highest Rated</span>
+                      </TabsTrigger>
+                    </TabsList>
                   </div>
-                  <MovieGrid
-                    movies={
-                      view === "recent"
-                        ? discoverData.recentlyAdded
-                        : view === "jumpscares"
-                        ? discoverData.mostJumpscares
-                        : discoverData.highestRated
-                    }
-                  />
-                </div>
+                  <TabsContent value="recent">
+                    <MovieGrid movies={discoverData.recentlyAdded} />
+                  </TabsContent>
+                  <TabsContent value="jumpscares">
+                    <MovieGrid movies={discoverData.mostJumpscares} />
+                  </TabsContent>
+                  <TabsContent value="highestRated">
+                    <MovieGrid movies={discoverData.highestRated} />
+                  </TabsContent>
+                </Tabs>
               )
             )}
           </div>
