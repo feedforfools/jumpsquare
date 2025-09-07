@@ -46,13 +46,12 @@ export function SearchBar({
           className
         )}
       >
-        <Search className="size-5 shrink-0 text-foreground/50" />
         <Input
           type="text"
           placeholder={placeholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="flex-1 bg-transparent border-0 text-foreground placeholder:text-foreground/50 text-sm md:text-base focus:outline-none"
+          className="flex-1 bg-transparent border-0 text-foreground placeholder:text-foreground/50 text-sm md:text-base focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
         />
         {query && (
           <Button
@@ -65,8 +64,21 @@ export function SearchBar({
             <X className="h-4 w-4" />
           </Button>
         )}
-        <Button type="submit" size="sm" className="hidden sm:inline-flex">
+        <Button
+          variant="reverse"
+          type="submit"
+          size="sm"
+          className="hidden sm:inline-flex"
+        >
           Search
+        </Button>
+        <Button
+          variant="reverse"
+          type="submit"
+          size="icon"
+          className="h-9 w-9 shrink-0 sm:hidden"
+        >
+          <Search className="h-4 w-4" strokeWidth={3} />
         </Button>
       </form>
     );
@@ -98,8 +110,13 @@ export function SearchBar({
           <X className="h-4 w-4" />
         </Button>
       )}
-      <Button type="submit" size="icon">
-        <Search className="h-4 w-4" />
+      {/* Show text button on small screens and up */}
+      <Button type="submit" size="sm" className="hidden sm:inline-flex">
+        Search
+      </Button>
+      {/* Show icon button only on small screens */}
+      <Button type="submit" size="icon" className="sm:hidden">
+        <Search className="h-4 w-4" strokeWidth={2.5} />
       </Button>
     </form>
   );

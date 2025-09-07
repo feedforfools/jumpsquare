@@ -104,24 +104,25 @@ export default function HomePage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-hero-gradient pb-10 pt-12">
+        <section className="bg-hero-gradient pb-8 pt-12">
           <div className="container mx-auto px-4 text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-app-surface backdrop-blur-sm border border-gray-800 text-brand-red text-xs md:text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-app-surface backdrop-blur-sm border-2 border-gray-800 text-brand-red text-xs md:text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-brand-red rounded-full animate-pulse"></span>
               The Ultimate Jumpscare Database
             </div>
+            {/* Title */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
               Know When the <span className="text-brand-red">Jumps</span> Are
               Coming
             </h1>
+            {/* Subtitle */}
             <p className="text-sm sm:text-lg md:text-xl text-app-text-secondary mb-10 max-w-2xl mx-auto">
               Get precise timestamps, categories, and descriptions for every
               jumpscare in thousands of movies.
             </p>
-
+            {/* Search Bar Container */}
             <div className="relative group max-w-2xl mx-auto">
-              {/* Search Bar Container */}
               <div className="relative">
                 <SearchBar
                   onSearch={handleSearch}
@@ -132,7 +133,7 @@ export default function HomePage() {
               </div>
             </div>
             {/* Popular Searches */}
-            <div className="mt-2 flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
+            <div className="mt-3 flex flex-wrap justify-center gap-2 text-xs sm:text-sm">
               <span className="text-app-text-secondary">Popular:</span>
               <button
                 onClick={() => handleQuickSearch("The Conjuring")}
