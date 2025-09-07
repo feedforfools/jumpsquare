@@ -136,7 +136,7 @@ export default function MovieDetailPage() {
           {/* Back Button */}
           <div className="mb-6">
             <Button
-              variant="ghost"
+              variant="neutral"
               disabled
               className="flex items-center space-x-2"
             >
@@ -166,13 +166,9 @@ export default function MovieDetailPage() {
                 ? "The movie you're looking for doesn't exist in our database."
                 : "Something went wrong while loading the movie data."}
             </p>
-            <Button
-              variant="outline"
-              onClick={() => router.push("/")}
-              className="gap-1 hover:bg-red-50 hover:border-red-200 hover:text-red-700 transition-all duration-200 ease-in-out group"
-            >
+            <Button variant="neutral" onClick={() => router.push("/")}>
               <ChevronLeft className="h-4 w-4 group-hover:transform group-hover:-translate-x-1 transition-transform" />
-              Back to Movies
+              Back
             </Button>
           </div>
         </main>
@@ -218,11 +214,7 @@ export default function MovieDetailPage() {
           <div className="container mx-auto px-4">
             {/* Back Button */}
             <div className="mb-6">
-              <Button
-                variant="outline"
-                onClick={() => router.back()}
-                className="gap-1 hover:bg-red-50 hover:border-red-200 hover:text-red-700 transition-all duration-200 ease-in-out group"
-              >
+              <Button variant="neutral" onClick={() => router.back()}>
                 <ChevronLeft className="h-4 w-4 group-hover:transform group-hover:-translate-x-1 transition-transform" />
                 <span>Back</span>
               </Button>
@@ -340,7 +332,7 @@ export default function MovieDetailPage() {
                   badgeColor="bg-gradient-to-r from-blue-500 to-cyan-500"
                   tilt={3}
                 >
-                  <Button variant="outline" size="sm">
+                  <Button variant="neutral" size="sm">
                     Export as SRT
                   </Button>
                 </ComingSoon>
@@ -360,7 +352,7 @@ export default function MovieDetailPage() {
                 badgeColor="bg-gradient-to-r from-green-500 to-emerald-500"
                 tilt={-7}
               >
-                <Button variant="outline">Suggest Edit</Button>
+                <Button variant="neutral">Suggest Edit</Button>
               </ComingSoon>
             </div>
           </div>

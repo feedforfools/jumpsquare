@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { SearchBar } from "@/components/search-bar";
@@ -102,7 +103,7 @@ export default function HomePage() {
 
   // View selector component
   const ViewSelector = () => (
-    <div className="flex items-center gap-1 p-1 border border-gray-800 rounded-2xl bg-app-surface">
+    <div className="flex items-center gap-1 p-1 bg-app-surface">
       {[
         { key: "recent", label: "Recently Added", shortLabel: "Recent" },
         {
@@ -119,21 +120,18 @@ export default function HomePage() {
         const active =
           view === (tab.key as "recent" | "jumpscares" | "highestRated");
         return (
-          <button
+          <Button
             key={tab.key}
             onClick={() =>
               setView(tab.key as "recent" | "jumpscares" | "highestRated")
             }
-            className={`px-2 py-1 text-xs font-medium rounded-xl transition-all duration-200 md:px-3 md:py-1.5 md:text-sm md:rounded-1xl ${
-              active
-                ? "bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white shadow-lg"
-                : "bg-app-surface text-app-text hover:text-brand-red hover:bg-brand-red-hover-light dark:hover:bg-brand-red-lighter"
-            }`}
+            variant={active ? "default" : "neutral"}
+            size="sm"
             aria-pressed={active}
           >
             <span className="hidden md:inline">{tab.label}</span>
             <span className="md:hidden">{tab.shortLabel}</span>
-          </button>
+          </Button>
         );
       })}
     </div>

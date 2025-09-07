@@ -72,11 +72,11 @@ export function Pagination({
       className={cn("flex items-center justify-center space-x-2", className)}
     >
       <Button
-        variant="outline"
+        variant="neutral"
         size="sm"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="gap-1 hover:bg-brand-red-light hover:border-brand-red-border hover:text-red-700 transition-all duration-200 ease-in-out disabled:hover:bg-transparent disabled:hover:border-border disabled:hover:text-muted-foreground"
+        className="gap-1"
       >
         <ChevronLeft className="h-4 w-4" />
         <span className="hidden sm:inline">Previous</span>
@@ -101,15 +101,10 @@ export function Pagination({
           return (
             <Button
               key={pageNum}
-              variant={isActive ? "default" : "outline"}
+              variant={isActive ? "default" : "neutral"}
               size="sm"
               onClick={() => onPageChange(pageNum)}
-              className={cn(
-                "h-8 w-8 p-0 transition-all duration-200 ease-in-out",
-                isActive
-                  ? "bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white border-0 shadow-lg pointer-events-none"
-                  : "hover:bg-brand-red-light hover:border-brand-red-border hover:text-red-700 hover:scale-105 hover:shadow-sm"
-              )}
+              className={cn("h-8 w-8 p-0", isActive && "pointer-events-none")}
             >
               {pageNum}
             </Button>
@@ -118,11 +113,11 @@ export function Pagination({
       </div>
 
       <Button
-        variant="outline"
+        variant="neutral"
         size="sm"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="gap-1 hover:bg-brand-red-light hover:border-brand-red-border hover:text-red-700 transition-all duration-200 ease-in-out disabled:hover:bg-transparent disabled:hover:border-border disabled:hover:text-muted-foreground"
+        className="gap-1"
       >
         <span className="hidden sm:inline">Next</span>
         <ChevronRight className="h-4 w-4" />

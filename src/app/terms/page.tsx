@@ -338,7 +338,7 @@ export default function TermsOfServicePage() {
           {/* Footer Actions */}
           <div className="text-center">
             <Link href="/">
-              <Button className="bg-brand-red hover:bg-brand-red-hover text-white">
+              <Button variant="default">
                 I Understand - Back to Here&apos;s the Jump
               </Button>
             </Link>

@@ -39,30 +39,27 @@ export function SearchBar({
 
   if (variant === "hero") {
     return (
-      <form
-        onSubmit={handleSubmit}
-        className={cn("flex items-center", className)}
-      >
-        <input
-          type="text"
-          placeholder={placeholder}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="flex-1 bg-transparent text-app-text placeholder-gray-500 px-5 py-1 md:py-2 text-sm md:text-lg focus:outline-none"
-        />
-        {query && (
-          <Button
-            type="button"
-            onClick={handleClear}
-            className="text-app-text hover:text-app-text-secondary mr-1 p-1 h-6 md:h-9 transition-all transform hover:scale-105 active:scale-95 bg-transparent border-0 shadow-none"
-          >
-            <X className="h-3 w-3 md:h-4 md:w-4" />
-          </Button>
-        )}
-        <Button
-          type="submit"
-          className="bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white mr-1 px-3 py-2 md:px-4 md:py-2 h-6 md:h-9 rounded-2xl text-xs md:text-sm transition-all transform hover:scale-105 active:scale-95 shadow-lg border-0"
-        >
+      <form onSubmit={handleSubmit} className="flex items-center space-x-2">
+        <div className={cn("relative flex flex-1 items-center", className)}>
+          <input
+            type="text"
+            placeholder={placeholder}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full bg-transparent text-app-text placeholder-gray-500 pl-5 pr-10 py-1 md:py-2 text-sm md:text-lg focus:outline-none"
+          />
+          {query && (
+            <Button
+              type="button"
+              variant="noShadow"
+              onClick={handleClear}
+              className="absolute right-2 text-app-text hover:text-app-text-secondary p-1 h-6 md:h-9 transition-all transform hover:scale-105 active:scale-95 bg-transparent border-0 shadow-none"
+            >
+              <X className="h-3 w-3 md:h-4 md:w-4" />
+            </Button>
+          )}
+        </div>
+        <Button type="submit" size="sm">
           <Search className="h-4 w-4" />
           Search
         </Button>
@@ -85,6 +82,7 @@ export function SearchBar({
       {query && (
         <Button
           type="button"
+          variant="noShadow"
           onClick={handleClear}
           className="text-app-text-muted hover:text-gray-700 p-1 h-auto w-auto bg-transparent border-0 shadow-none"
         >

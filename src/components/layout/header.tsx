@@ -16,7 +16,7 @@ export function Header() {
             position="top-right"
             badgeColor="bg-gradient-to-r from-red-500 to-orange-500"
           >
-            <Button variant="outline" size="sm" disabled>
+            <Button variant="neutral" size="sm" disabled>
               Submit Movie
             </Button>
           </ComingSoon>
