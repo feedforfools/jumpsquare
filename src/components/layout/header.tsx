@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
   return (
-    <header className="border-b">
+    <header className="border-b-2">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-2xl font-bold text-brand-red">
           Here&apos;s the Jump!
