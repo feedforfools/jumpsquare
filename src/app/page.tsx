@@ -155,8 +155,8 @@ export default function HomePage() {
               Coming
             </h1>
             <p className="text-sm sm:text-lg md:text-xl text-app-text-secondary mb-10 max-w-2xl mx-auto">
-              Get precise timestamps, intensity levels, and descriptions for
-              every jumpscare in thousands of movies.
+              Get precise timestamps, categories, and descriptions for every
+              jumpscare in thousands of movies.
             </p>
 
             <div className="relative group max-w-2xl mx-auto">

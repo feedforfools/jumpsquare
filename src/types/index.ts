@@ -41,7 +41,6 @@ export interface Jumpscare {
   movie_id: string;
   timestamp_minutes: number;
   timestamp_seconds: number;
-  intensity: number; // 1-10
   description: string;
   category: "major" | "minor" | "false_alarm";
 }

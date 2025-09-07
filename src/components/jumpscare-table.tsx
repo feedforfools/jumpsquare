@@ -21,14 +21,6 @@ export function JumpscareTable({
   formatTimestamp,
   onTimestampClick,
 }: JumpscareTableProps) {
-  const getIntensityColor = (intensity: number) => {
-    if (intensity <= 3) return "bg-jumpscare-low-bg text-jumpscare-low";
-    if (intensity <= 6)
-      return "bg-jumpscare-moderate-bg text-jumpscare-moderate";
-    if (intensity <= 8) return "bg-jumpscare-strong-bg text-jumpscare-strong";
-    return "bg-jumpscare-intense-bg text-jumpscare-intense";
-  };
-
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "major":
@@ -79,7 +71,6 @@ export function JumpscareTable({
         <TableRow>
           <TableHead>Time</TableHead>
           <TableHead>Type</TableHead>
-          <TableHead>Intensity</TableHead>
           <TableHead>Description</TableHead>
         </TableRow>
       </TableHeader>
@@ -101,11 +92,6 @@ export function JumpscareTable({
             <TableCell>
               <Badge className={getCategoryColor(jumpscare.category)}>
                 {getCategoryLabel(jumpscare.category)}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Badge className={getIntensityColor(jumpscare.intensity)}>
-                {jumpscare.intensity}/10
               </Badge>
             </TableCell>
             <TableCell>{jumpscare.description}</TableCell>
