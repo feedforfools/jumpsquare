@@ -35,13 +35,13 @@
     --radius: 0.5rem;
 
     /* === App-Specific Brand Colors === */
-    --brand-red: 0 65% 51%;           /* red-600 equivalent */
-    --brand-red-hover: 0 84% 42%;     /* red-700 equivalent */
+    --brand-red: 0 60% 48%;           /* Slightly less saturated */
+    --brand-red-hover: 0 70% 40%;     /* Deeper on hover */
     --brand-red-hover-light: 0 50% 98%;/* red-50 equivalent */
-    --brand-red-hero: 0 92% 93%;      /* red-100 for hero equivalent */
-    --brand-red-light: 0 60% 96%;     /* red-100 equivalent */
-    --brand-red-lighter: 0 84% 93%;   /* red-100 equivalent */
-    --brand-red-border: 0 50% 90%;    /* red-200 equivalent */
+    --brand-red-hero: 0 85% 92%;      /* red-100 for hero equivalent */
+    --brand-red-light: 0 55% 95%;     /* red-100 equivalent */
+    --brand-red-lighter: 0 75% 91%;   /* red-100 equivalent */
+    --brand-red-border: 0 45% 88%;    /* red-200 equivalent */
 
     /* === Gray Scale System === */
     --gray-50: 210 20% 98%;
@@ -104,12 +104,12 @@
     --ring: 212.7 26.8% 83.9%;
 
     /* === App-Specific Dark Colors === */
-    --brand-red: 0 72% 58%;           /* Slightly brighter red for dark mode */
-    --brand-red-hover: 0 72% 52%;     
-    --brand-red-hero: 0 92% 13%;      /* red-100 for hero equivalent */
-    --brand-red-light: 0 72% 8%;      /* Very dark red background */
-    --brand-red-lighter: 0 72% 12%;   
-    --brand-red-border: 0 72% 20%;    
+    --brand-red: 0 90% 62%;           /* Higher lightness, moderate saturation */
+    --brand-red-hover: 0 70% 68%;     /* Lighter on hover in dark mode */
+    --brand-red-hero: 0 80% 15%;      /* red-100 for hero equivalent */
+    --brand-red-light: 0 60% 12%;      /* Very dark red background */
+    --brand-red-lighter: 0 65% 18%;   
+    --brand-red-border: 0 55% 25%;    
 
     /* === Dark Gray Scale === */
     --gray-50: 217.2 32.6% 17.5%;
