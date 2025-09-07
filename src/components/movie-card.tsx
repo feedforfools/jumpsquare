@@ -51,7 +51,7 @@ export function MovieCard({ movie }: MovieCardProps) {
                   {movie.title}
                 </span>
               </div>
-              <Badge variant="outline" className="ml-2 text-xs flex-shrink-0">
+              <Badge variant="neutral" className="ml-2 text-xs flex-shrink-0">
                 {movie.rating}
               </Badge>
             </div>

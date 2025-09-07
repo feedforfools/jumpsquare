@@ -232,10 +232,10 @@ export default function MovieDetailPage() {
                       <Calendar className="h-4 w-4 text-gray-900" />
                       <span>{movie.year}</span>
                     </div>
-                    <Badge variant="outline" className="bg-app-surface">
+                    <Badge variant="neutral" className="bg-app-surface">
                       {movie.rating}
                     </Badge>
-                    <Badge variant="outline" className="bg-app-surface">
+                    <Badge variant="neutral" className="bg-app-surface">
                       {getGenreDisplay()}
                     </Badge>
                     {movie.runtime_minutes && (
@@ -284,7 +284,7 @@ export default function MovieDetailPage() {
                       <span className="text-sm font-medium">
                         Total Jumpscares
                       </span>
-                      <Badge variant="outline" className="text-base">
+                      <Badge variant="neutral" className="text-base">
                         {movie.jumpscare_count}
                       </Badge>
                     </div>
