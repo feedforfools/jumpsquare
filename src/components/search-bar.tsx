@@ -70,7 +70,7 @@ export function SearchBar({
           size="sm"
           className="hidden sm:inline-flex"
         >
-          Search
+          <span className="font-semibold">Search</span>
         </Button>
         <Button
           variant="reverse"
