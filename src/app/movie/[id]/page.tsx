@@ -272,7 +272,7 @@ export default function MovieDetailPage() {
                 </div>
 
                 {/* Stats Card */}
-                <Card className="lg:w-90 bg-app-surface">
+                <Card className="lg:w-90">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <Zap className="h-5 w-5 text-yellow-500" />

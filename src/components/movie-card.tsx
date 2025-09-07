@@ -39,7 +39,7 @@ export function MovieCard({ movie }: MovieCardProps) {
 
   return (
     <Link href={`/movie/${movie.id}`}>
-      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full rounded-2xl">
+      <Card className="transition-transform cursor-pointer h-full hover:-translate-x-1 hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="min-w-0">
             <div className="flex items-start justify-between">
