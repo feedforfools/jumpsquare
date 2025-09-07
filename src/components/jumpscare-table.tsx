@@ -74,46 +74,44 @@ export function JumpscareTable({
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Time</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Intensity</TableHead>
-            <TableHead>Description</TableHead>
+    <Table variant="neutral">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Time</TableHead>
+          <TableHead>Type</TableHead>
+          <TableHead>Intensity</TableHead>
+          <TableHead>Description</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {jumpscares.map((jumpscare) => (
+          <TableRow key={jumpscare.id}>
+            <TableCell className="font-mono">
+              <button
+                onClick={onTimestampClick}
+                className="hover:text-brand-red transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
+                title="Click to toggle time format"
+              >
+                {timestampFormatter(
+                  jumpscare.timestamp_minutes,
+                  jumpscare.timestamp_seconds
+                )}
+              </button>
+            </TableCell>
+            <TableCell>
+              <Badge className={getCategoryColor(jumpscare.category)}>
+                {getCategoryLabel(jumpscare.category)}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <Badge className={getIntensityColor(jumpscare.intensity)}>
+                {jumpscare.intensity}/10
+              </Badge>
+            </TableCell>
+            <TableCell>{jumpscare.description}</TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {jumpscares.map((jumpscare) => (
-            <TableRow key={jumpscare.id}>
-              <TableCell className="font-mono">
-                <button
-                  onClick={onTimestampClick}
-                  className="hover:text-brand-red transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
-                  title="Click to toggle time format"
-                >
-                  {timestampFormatter(
-                    jumpscare.timestamp_minutes,
-                    jumpscare.timestamp_seconds
-                  )}
-                </button>
-              </TableCell>
-              <TableCell>
-                <Badge className={getCategoryColor(jumpscare.category)}>
-                  {getCategoryLabel(jumpscare.category)}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <Badge className={getIntensityColor(jumpscare.intensity)}>
-                  {jumpscare.intensity}/10
-                </Badge>
-              </TableCell>
-              <TableCell>{jumpscare.description}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
