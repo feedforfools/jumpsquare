@@ -39,28 +39,33 @@ export function SearchBar({
 
   if (variant === "hero") {
     return (
-      <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-        <div className={cn("relative flex flex-1 items-center", className)}>
-          <input
-            type="text"
-            placeholder={placeholder}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent text-app-text placeholder-gray-500 pl-5 pr-10 py-1 md:py-2 text-sm md:text-lg focus:outline-none"
-          />
-          {query && (
-            <Button
-              type="button"
-              variant="noShadow"
-              onClick={handleClear}
-              className="absolute right-2 text-app-text hover:text-app-text-secondary p-1 h-6 md:h-9 transition-all transform hover:scale-105 active:scale-95 bg-transparent border-0 shadow-none"
-            >
-              <X className="h-3 w-3 md:h-4 md:w-4" />
-            </Button>
-          )}
-        </div>
-        <Button type="submit" size="sm">
-          <Search className="h-4 w-4" />
+      <form
+        onSubmit={handleSubmit}
+        className={cn(
+          "flex w-full items-center gap-2 rounded-base border-2 border-border bg-background p-2 shadow-shadow",
+          className
+        )}
+      >
+        <Search className="size-5 shrink-0 text-foreground/50" />
+        <Input
+          type="text"
+          placeholder={placeholder}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="flex-1 bg-transparent border-0 text-foreground placeholder:text-foreground/50 text-sm md:text-base focus:outline-none"
+        />
+        {query && (
+          <Button
+            type="button"
+            onClick={handleClear}
+            variant="neutral"
+            size="icon"
+            className="h-7 w-7 shrink-0"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+        <Button type="submit" size="sm" className="hidden sm:inline-flex">
           Search
         </Button>
       </form>
@@ -70,7 +75,10 @@ export function SearchBar({
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn("flex w-full max-w-sm items-center space-x-2", className)}
+      className={cn(
+        "flex w-full items-center gap-2 rounded-base border-2 border-border bg-background p-2 shadow-shadow",
+        className
+      )}
     >
       <Input
         type="text"
@@ -82,9 +90,10 @@ export function SearchBar({
       {query && (
         <Button
           type="button"
-          variant="noShadow"
           onClick={handleClear}
-          className="text-app-text-muted hover:text-gray-700 p-1 h-auto w-auto bg-transparent border-0 shadow-none"
+          variant="neutral"
+          size="icon"
+          className="h-7 w-7 shrink-0"
         >
           <X className="h-4 w-4" />
         </Button>

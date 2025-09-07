@@ -161,7 +161,7 @@ export default function HomePage() {
 
             <div className="relative group max-w-2xl mx-auto">
               {/* Search Bar Container */}
-              <div className="relative bg-app-surface backdrop-blur-3xl rounded-3xl border border-gray-800 p-1">
+              <div className="relative">
                 <SearchBar
                   onSearch={handleSearch}
                   placeholder="Search for a movie..."
