@@ -10,15 +10,17 @@ interface ComingSoonProps {
   className?: string;
   disabled?: boolean;
   tilt?: number;
+  size?: "xs" | "sm" | "md" | "lg";
 }
 
 export function ComingSoon({
   children,
   position = "top-right",
-  badgeColor = "bg-gradient-to-r from-purple-500 to-pink-500",
+  badgeColor = "bg-main",
   className,
   disabled = true,
   tilt = -12,
+  size = "xs",
 }: ComingSoonProps) {
   const [isHovered, setIsHovered] = React.useState(false);
 
@@ -29,12 +31,19 @@ export function ComingSoon({
     "bottom-right": "-bottom-1.5 -right-2.5",
   };
 
+  const sizeClasses = {
+    xs: "px-1.5 py-0.5 text-[8px]",
+    sm: "px-2 py-0.5 text-[10px]",
+    md: "px-2.5 py-1 text-xs",
+    lg: "px-3 py-1.5 text-sm",
+  };
+
   // Adjust tilt direction based on position for better visual balance
   const getTiltDirection = () => {
     if (position === "top-right" || position === "bottom-left") {
-      return Math.abs(tilt); // Positive tilt for left side
+      return Math.abs(tilt); // Positive tilt for right side
     }
-    return -Math.abs(tilt); // Negative tilt for right side
+    return -Math.abs(tilt); // Negative tilt for left side
   };
 
   const finalTilt = getTiltDirection();
@@ -65,29 +74,22 @@ export function ComingSoon({
       >
         <div
           className={cn(
-            "relative px-1.5 py-0.5 rounded-full text-[8px] font-bold text-white shadow-lg",
+            "relative font-bold text-main-foreground border-2 border-border",
             "transform transition-all duration-300",
+            "shadow-shadow",
+            sizeClasses[size],
             badgeColor,
-            isHovered && "animate-breathing"
+            isHovered &&
+              "translate-x-boxShadowX translate-y-boxShadowY shadow-none"
           )}
         >
-          <span className="relative z-10">soon</span>
-
-          {/* Glow effect on hover */}
-          {isHovered && (
-            <div
-              className={cn(
-                "absolute inset-0 rounded-full blur-md opacity-70",
-                badgeColor
-              )}
-            />
-          )}
+          <span className="relative z-10 uppercase tracking-wide">SOON</span>
         </div>
       </div>
 
       {/* Optional subtle overlay effect */}
       {disabled && (
-        <div className="absolute inset-0 rounded-md bg-app-surface-secondary/5 pointer-events-none" />
+        <div className="absolute inset-0 bg-app-surface-secondary/5 pointer-events-none" />
       )}
     </div>
   );

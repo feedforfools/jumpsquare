@@ -10,16 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ComingSoon } from "@/components/ui/coming-soon";
+// import { ComingSoon } from "@/components/ui/coming-soon";
 import { Movie, Jumpscare } from "@/types";
-import {
-  ArrowLeft,
-  Calendar,
-  Zap,
-  User,
-  Clock,
-  ChevronLeft,
-} from "lucide-react";
+import { Calendar, Zap, User, Clock, ChevronLeft } from "lucide-react";
 
 export default function MovieDetailPage() {
   const params = useParams();
@@ -140,7 +133,7 @@ export default function MovieDetailPage() {
               disabled
               className="flex items-center space-x-2"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4 -ml-1" />
               <span>Back</span>
             </Button>
           </div>
@@ -167,7 +160,7 @@ export default function MovieDetailPage() {
                 : "Something went wrong while loading the movie data."}
             </p>
             <Button variant="neutral" onClick={() => router.push("/")}>
-              <ChevronLeft className="h-4 w-4 group-hover:transform group-hover:-translate-x-1 transition-transform" />
+              <ChevronLeft className="h-4 w-4 -ml-1" />
               Back
             </Button>
           </div>
@@ -215,7 +208,7 @@ export default function MovieDetailPage() {
             {/* Back Button */}
             <div className="mb-6">
               <Button variant="neutral" onClick={() => router.back()}>
-                <ChevronLeft className="h-4 w-4 group-hover:transform group-hover:-translate-x-1 transition-transform" />
+                <ChevronLeft className="h-4 w-4 -ml-1" />
                 <span>Back</span>
               </Button>
             </div>
@@ -225,7 +218,9 @@ export default function MovieDetailPage() {
               <div className="flex flex-col lg:flex-row lg:items-start lg:space-x-8">
                 {/* Movie Info */}
                 <div className="flex-1">
-                  <h1 className="text-4xl font-bold mb-4">{movie.title}</h1>
+                  <h1 className="text-3xl sm:text-4xl font-bold mb-4">
+                    {movie.title}
+                  </h1>
 
                   <div className="flex flex-wrap items-center gap-4 mb-4">
                     <div className="flex items-center space-x-2">
@@ -265,7 +260,7 @@ export default function MovieDetailPage() {
                   )}
 
                   {movie.description && (
-                    <p className="text-lg text-gray-900 mb-6 leading-relaxed">
+                    <p className="text-md sm:text-lg text-gray-900 mb-6 leading-relaxed">
                       {movie.description}
                     </p>
                   )}
@@ -326,16 +321,19 @@ export default function MovieDetailPage() {
             {/* Jumpscare Timeline */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Jumpscare Timeline</h2>
-                <ComingSoon
+                <h2 className="text-xl sm:text-2xl font-bold">
+                  Jumpscare Timeline
+                </h2>
+                {/* <ComingSoon
+                  size="xs"
                   position="bottom-right"
-                  badgeColor="bg-gradient-to-r from-blue-500 to-cyan-500"
+                  badgeColor="bg-main"
                   tilt={3}
-                >
-                  <Button variant="neutral" size="sm">
-                    Export as SRT
-                  </Button>
-                </ComingSoon>
+                > */}
+                <Button variant="neutral" size="sm" disabled>
+                  Export as SRT
+                </Button>
+                {/* </ComingSoon> */}
               </div>
 
               <JumpscareTable
@@ -347,13 +345,16 @@ export default function MovieDetailPage() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-4 pb-8">
-              <ComingSoon
+              {/* <ComingSoon
+                size="xs"
                 position="top-left"
-                badgeColor="bg-gradient-to-r from-green-500 to-emerald-500"
+                badgeColor="bg-main"
                 tilt={-7}
-              >
-                <Button variant="neutral">Suggest Edit</Button>
-              </ComingSoon>
+              > */}
+              <Button variant="neutral" disabled>
+                Suggest Edit
+              </Button>
+              {/* </ComingSoon> */}
             </div>
           </div>
         </section>
