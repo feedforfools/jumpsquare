@@ -26,9 +26,9 @@ export function JumpscareTable({
       case "major":
         return "bg-jumpscare-intense-bg text-jumpscare-intense";
       case "minor":
-        return "bg-jumpscare-low-bg text-jumpscare-low";
-      case "false_alarm":
         return "bg-jumpscare-mild-bg text-jumpscare-mild";
+      case "false_alarm":
+        return "bg-jumpscare-moderate-bg text-jumpscare-moderate";
       default:
         return "bg-gray-100 text-gray-800";
     }

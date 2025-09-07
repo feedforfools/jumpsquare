@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 // import { ComingSoon } from "@/components/ui/coming-soon";
 import { Movie, Jumpscare } from "@/types";
 import { Calendar, Zap, User, Clock, ChevronLeft } from "lucide-react";
+import { getGenreDisplay } from "@/lib/utils";
 
 export default function MovieDetailPage() {
   const params = useParams();
@@ -171,15 +172,20 @@ export default function MovieDetailPage() {
   }
 
   const getIntensityLevel = (count: number) => {
-    if (count <= 4)
+    if (count <= 5)
       return {
         label: "Mild",
         color: "bg-jumpscare-mild-bg text-jumpscare-mild",
       };
-    if (count <= 7)
+    if (count <= 10)
       return {
         label: "Moderate",
         color: "bg-jumpscare-moderate-bg text-jumpscare-moderate",
+      };
+    if (count <= 15)
+      return {
+        label: "Strong",
+        color: "bg-jumpscare-strong-bg text-jumpscare-strong",
       };
     return {
       label: "Intense",
@@ -188,14 +194,6 @@ export default function MovieDetailPage() {
   };
 
   const intensityLevel = getIntensityLevel(movie.jumpscare_count);
-
-  // Get genre display text
-  const getGenreDisplay = () => {
-    if (movie.genres && movie.genres.length > 0) {
-      return movie.genres.map((g) => g.name).join(", ");
-    }
-    return movie.genre || "Horror";
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-app-surface bg-dot-pattern">
@@ -231,7 +229,7 @@ export default function MovieDetailPage() {
                       {movie.rating}
                     </Badge>
                     <Badge variant="neutral" className="bg-app-surface">
-                      {getGenreDisplay()}
+                      {getGenreDisplay(movie)}
                     </Badge>
                     {movie.runtime_minutes && (
                       <div className="flex items-center space-x-2">

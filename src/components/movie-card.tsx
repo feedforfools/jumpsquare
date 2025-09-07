@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Movie } from "@/types";
 import { Clock, Zap, User } from "lucide-react";
+import { getGenreDisplay } from "@/lib/utils";
 
 interface MovieCardProps {
   movie: Movie;
@@ -12,29 +13,15 @@ export function MovieCard({ movie }: MovieCardProps) {
   const getIntensityColor = (count: number) => {
     if (count <= 3) return "bg-jumpscare-mild-bg text-jumpscare-mild";
     if (count <= 7) return "bg-jumpscare-moderate-bg text-jumpscare-moderate";
+    if (count <= 10) return "bg-jumpscare-strong-bg text-jumpscare-strong";
     return "bg-jumpscare-intense-bg text-jumpscare-intense";
   };
 
   const getIntensityLabel = (count: number) => {
     if (count <= 3) return "Mild";
     if (count <= 7) return "Moderate";
+    if (count <= 10) return "Strong";
     return "Intense";
-  };
-
-  // Get genre display text
-  const getGenreDisplay = () => {
-    if (movie.genres && movie.genres.length > 0) {
-      // For card display, show primary genre (first one) or up to 2 genres
-      const genreNames = movie.genres.map((g) => g.name);
-      if (genreNames.length === 1) {
-        return genreNames[0];
-      } else if (genreNames.length === 2) {
-        return genreNames.join(", ");
-      } else {
-        return `${genreNames[0]}, +${genreNames.length - 1}`;
-      }
-    }
-    return movie.genre || "Horror";
   };
 
   return (
@@ -59,7 +46,7 @@ export function MovieCard({ movie }: MovieCardProps) {
           <div className="flex items-center space-x-2 text-sm text-app-text-secondary">
             <span>{movie.year}</span>
             <span>•</span>
-            <span>{getGenreDisplay()}</span>
+            <span>{getGenreDisplay(movie)}</span>
             {movie.runtime_minutes && (
               <>
                 <span>•</span>
