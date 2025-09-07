@@ -39,9 +39,9 @@ export async function GET(request: NextRequest) {
     // TODO: Using Supabase Full-Text Search is more efficient and secure
     // NOTE: Enable 'pg_trgm' extension and create a GIN index in Supabase for better performance
     const { data, error, count } = await supabaseAdmin
-      .from("v2_movies")
+      .from("v3_movies")
       .select(
-        `*, v2_movie_directors(v2_directors(id, name)), v2_movie_genres(v2_genres(id, name))`,
+        `*, v3_movie_directors(v3_directors(id, name)), v3_movie_genres(v3_genres(id, name))`,
         { count: "exact" }
       )
       .textSearch("title", `'${query}'`)

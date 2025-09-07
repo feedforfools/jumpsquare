@@ -1,34 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin, detailRateLimit } from "@/lib/server-utils";
-
-// Define types for the database relations
-interface MovieDirectorRelation {
-  v2_directors: {
-    id: string;
-    name: string;
-  };
-}
-
-interface MovieGenreRelation {
-  v2_genres: {
-    id: string;
-    name: string;
-  };
-}
-
-interface MovieWithRelations {
-  id: string;
-  title: string;
-  year: number;
-  genre: string;
-  rating: string;
-  jumpscare_count: number;
-  poster_url?: string;
-  description?: string;
-  runtime_minutes?: number;
-  v2_movie_directors: MovieDirectorRelation[];
-  v2_movie_genres: MovieGenreRelation[];
-}
+import {
+  supabaseAdmin,
+  detailRateLimit,
+  transformMovieForCard,
+} from "@/lib/server-utils";
 
 export async function GET(
   request: NextRequest,
@@ -59,32 +34,28 @@ export async function GET(
     }
 
     const { data, error } = await supabaseAdmin
-      .from("v2_movies")
+      .from("v3_movies")
       .select(
         `
         *,
-        v2_movie_directors ( v2_directors (id, name) ),
-        v2_movie_genres ( v2_genres (id, name) )
+        v3_movie_directors(v3_directors(*)),
+        v3_movie_genres(v3_genres(*))
       `
       )
       .eq("id", id)
       .single();
 
-    if (error) throw error;
-
-    if (!data) {
-      return NextResponse.json({ error: "Movie not found" }, { status: 404 });
+    if (error) {
+      if (error.code === "PGRST116") {
+        return NextResponse.json(
+          { error: "Movie not found" },
+          { status: 404, headers }
+        );
+      }
+      throw error;
     }
 
-    // Type the data as MovieWithRelations
-    const movieData = data as MovieWithRelations;
-
-    const transformedMovie = {
-      ...movieData,
-      directors: movieData.v2_movie_directors.map((md) => md.v2_directors),
-      genres: movieData.v2_movie_genres.map((mg) => mg.v2_genres),
-    };
-
+    const transformedMovie = transformMovieForCard(data);
     return NextResponse.json(transformedMovie, { headers });
   } catch (error: unknown) {
     const errorMessage =

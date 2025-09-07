@@ -30,7 +30,7 @@ export async function GET(
     }
 
     const { data, error } = await supabaseAdmin
-      .from("v2_jumpscares")
+      .from("v3_jumpscares")
       .select("*")
       .eq("movie_id", id)
       .order("timestamp_minutes", { ascending: true })

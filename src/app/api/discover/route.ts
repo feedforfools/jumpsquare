@@ -26,23 +26,23 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const selectQuery = `*, v2_movie_directors(v2_directors(id, name)), v2_movie_genres(v2_genres(id, name))`;
+    const selectQuery = `*, v3_movie_directors(v3_directors(id, name)), v3_movie_genres(v3_genres(id, name))`;
 
     // Fetch a few different categories in parallel
     const [recentlyAddedRes, highestRatedRes, mostJumpscaresRes] =
       await Promise.all([
         supabaseAdmin
-          .from("v2_movies")
+          .from("v3_movies")
           .select(selectQuery)
           .order("created_at", { ascending: false })
           .limit(MOVIES_PER_PAGE),
         supabaseAdmin
-          .from("v2_movies")
+          .from("v3_movies")
           .select(selectQuery)
           .order("year", { ascending: false })
           .limit(MOVIES_PER_PAGE),
         supabaseAdmin
-          .from("v2_movies")
+          .from("v3_movies")
           .select(selectQuery)
           .order("jumpscare_count", { ascending: false })
           .limit(MOVIES_PER_PAGE),

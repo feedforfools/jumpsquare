@@ -34,14 +34,15 @@ export const detailRateLimit = new Ratelimit({
 
 // Define types for the database relations
 interface MovieDirectorRelation {
-  v2_directors: {
+  v3_directors: {
     id: string;
     name: string;
+    bio?: string;
   };
 }
 
 interface MovieGenreRelation {
-  v2_genres: {
+  v3_genres: {
     id: string;
     name: string;
   };
@@ -53,10 +54,10 @@ interface MovieWithRelations {
   year: number;
   rating: string;
   jumpscare_count: number;
-  runtime_minutes?: number;
-  description?: string;
-  v2_movie_directors?: MovieDirectorRelation[];
-  v2_movie_genres?: MovieGenreRelation[];
+  runtime_minutes: number;
+  description: string;
+  v3_movie_directors?: MovieDirectorRelation[];
+  v3_movie_genres?: MovieGenreRelation[];
 }
 
 // Helper function to transform movie data for card displays
@@ -71,12 +72,12 @@ export const transformMovieForCard = (movie: MovieWithRelations | null) => {
     runtime_minutes: movie.runtime_minutes,
     description: movie.description,
     directors:
-      movie.v2_movie_directors
+      movie.v3_movie_directors
         ?.slice(0, 2)
-        .map((md: MovieDirectorRelation) => md.v2_directors) || [],
+        .map((md: MovieDirectorRelation) => md.v3_directors) || [],
     genres:
-      movie.v2_movie_genres
+      movie.v3_movie_genres
         ?.slice(0, 2)
-        .map((mg: MovieGenreRelation) => mg.v2_genres) || [],
+        .map((mg: MovieGenreRelation) => mg.v3_genres) || [],
   };
 };
