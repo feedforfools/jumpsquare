@@ -4,25 +4,14 @@ import { Badge } from "@/components/ui/badge";
 import { Movie } from "@/types";
 import { Clock, Zap, User } from "lucide-react";
 import { getGenreDisplay } from "@/lib/utils";
+import { getJumpscareIntensity } from "@/lib/jumpscare-utils";
 
 interface MovieCardProps {
   movie: Movie;
 }
 
 export function MovieCard({ movie }: MovieCardProps) {
-  const getIntensityColor = (count: number) => {
-    if (count <= 3) return "bg-jumpscare-mild-bg text-jumpscare-mild";
-    if (count <= 7) return "bg-jumpscare-moderate-bg text-jumpscare-moderate";
-    if (count <= 10) return "bg-jumpscare-strong-bg text-jumpscare-strong";
-    return "bg-jumpscare-intense-bg text-jumpscare-intense";
-  };
-
-  const getIntensityLabel = (count: number) => {
-    if (count <= 3) return "Mild";
-    if (count <= 7) return "Moderate";
-    if (count <= 10) return "Strong";
-    return "Intense";
-  };
+  const intensity = getJumpscareIntensity(movie.jumpscare_count);
 
   return (
     <Link href={`/movie/${movie.id}`}>
@@ -69,12 +58,11 @@ export function MovieCard({ movie }: MovieCardProps) {
             <div className="flex items-center space-x-1">
               <Zap className="h-4 w-4 text-yellow-500" />
               <span className="text-sm font-medium">
-                {movie.jumpscare_count} jumpscares
+                {movie.jumpscare_count}{" "}
+                {movie.jumpscare_count === 1 ? "jumpscare" : "jumpscares"}
               </span>
             </div>
-            <Badge className={getIntensityColor(movie.jumpscare_count)}>
-              {getIntensityLabel(movie.jumpscare_count)}
-            </Badge>
+            <Badge className={intensity.colorClasses}>{intensity.label}</Badge>
           </div>
           {movie.description && (
             <p className="text-sm text-app-text-secondary line-clamp-2">

@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Movie, Jumpscare } from "@/types";
 import { Calendar, Zap, User, Clock, ChevronLeft } from "lucide-react";
 import { getGenreDisplay } from "@/lib/utils";
+import { getJumpscareIntensity } from "@/lib/jumpscare-utils";
 
 export default function MovieDetailPage() {
   const params = useParams();
@@ -171,29 +172,7 @@ export default function MovieDetailPage() {
     );
   }
 
-  const getIntensityLevel = (count: number) => {
-    if (count <= 5)
-      return {
-        label: "Mild",
-        color: "bg-jumpscare-mild-bg text-jumpscare-mild",
-      };
-    if (count <= 10)
-      return {
-        label: "Moderate",
-        color: "bg-jumpscare-moderate-bg text-jumpscare-moderate",
-      };
-    if (count <= 15)
-      return {
-        label: "Strong",
-        color: "bg-jumpscare-strong-bg text-jumpscare-strong",
-      };
-    return {
-      label: "Intense",
-      color: "bg-jumpscare-intense-bg text-jumpscare-intense",
-    };
-  };
-
-  const intensityLevel = getIntensityLevel(movie.jumpscare_count);
+  const intensityLevel = getJumpscareIntensity(movie.jumpscare_count);
 
   return (
     <div className="min-h-screen flex flex-col bg-app-surface bg-dot-pattern">
@@ -286,7 +265,7 @@ export default function MovieDetailPage() {
                       <span className="text-sm font-medium">
                         Intensity Level
                       </span>
-                      <Badge className={intensityLevel.color}>
+                      <Badge className={intensityLevel.colorClasses}>
                         {intensityLevel.label}
                       </Badge>
                     </div>
