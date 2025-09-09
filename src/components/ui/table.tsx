@@ -123,7 +123,7 @@ const tableRowVariants = cva(
     variants: {
       variant: {
         default: "bg-main text-main-foreground",
-        neutral: "bg-background hover:bg-secondary-background text-foreground",
+        neutral: "bg-secondary-background hover:bg-background text-foreground",
         striped:
           "odd:bg-secondary-background even:bg-background hover:bg-main/20 text-foreground",
         ghost: "bg-transparent hover:bg-secondary-background text-foreground",

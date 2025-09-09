@@ -8,7 +8,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const tabsListVariants = cva(
-  "inline-flex items-center justify-center rounded-base border-2 border-border bg-background text-foreground gap-1",
+  "inline-flex items-center justify-center rounded-base border-2 border-border bg-secondary-background text-foreground gap-1",
   {
     variants: {
       variant: {

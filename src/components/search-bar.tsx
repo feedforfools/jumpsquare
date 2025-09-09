@@ -42,7 +42,7 @@ export function SearchBar({
       <form
         onSubmit={handleSubmit}
         className={cn(
-          "flex w-full items-center gap-2 rounded-base border-2 border-border bg-background p-2 shadow-shadow",
+          "flex w-full items-center gap-2 rounded-base border-2 border-border bg-secondary-background p-2 shadow-shadow",
           className
         )}
       >
@@ -68,7 +68,7 @@ export function SearchBar({
           variant="reverse"
           type="submit"
           size="sm"
-          className="hidden sm:inline-flex"
+          className="hidden sm:inline-flex -mr-1.5"
         >
           <span className="font-semibold">Search</span>
         </Button>
