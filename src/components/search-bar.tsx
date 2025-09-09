@@ -57,9 +57,9 @@ export function SearchBar({
           <Button
             type="button"
             onClick={handleClear}
-            variant="neutral"
+            variant="reverse"
             size="icon"
-            className="h-7 w-7 shrink-0"
+            className="h-7 w-7 shrink-0 bg-secondary-background text-foreground"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -68,17 +68,17 @@ export function SearchBar({
           variant="reverse"
           type="submit"
           size="sm"
-          className="hidden sm:inline-flex -mr-1.5"
+          className="hidden sm:inline-flex -mr-2 px-4 h-10"
         >
-          <span className="font-semibold">Search</span>
+          <span className="font-bold text-base">Search</span>
         </Button>
         <Button
           variant="reverse"
           type="submit"
           size="icon"
-          className="h-9 w-9 shrink-0 sm:hidden"
+          className="h-9 w-9 shrink-0 sm:hidden px-4.5 h-10"
         >
-          <Search className="h-4 w-4" strokeWidth={3} />
+          <Search className="h-5 w-5" strokeWidth={4} />
         </Button>
       </form>
     );

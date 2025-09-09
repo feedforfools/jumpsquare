@@ -19,9 +19,14 @@ export function Header() {
         <nav className="flex items-center space-x-4">
           <ThemeToggle />
           {/* <ComingSoon size="xs" position="top-right" badgeColor="bg-main"> */}
-          <Button variant="neutral" size="sm" disabled>
-            Submit Movie
-          </Button>
+          <div>
+            <Button variant="neutral" size="sm" disabled className="hidden sm:block">
+              Submit Movie
+            </Button>
+            <Button variant="neutral" size="sm" disabled className="sm:hidden">
+              Add Movie
+            </Button>
+          </div>
           {/* </ComingSoon> */}
         </nav>
       </div>
