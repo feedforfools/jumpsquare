@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/footer";
 import { SearchBar } from "@/components/search-bar";
 import { MovieGrid } from "@/components/movie-grid";
 import { MovieGridSkeleton } from "@/components/movie-grid-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Movie } from "@/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -174,8 +175,8 @@ export default function HomePage() {
               <>
                 {/* Loading state header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                  <div className="h-7 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse"></div>
-                  <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-72 animate-pulse"></div>
+                  <Skeleton className="h-7 w-48" />
+                  <Skeleton className="h-10 w-72" />
                 </div>
                 <MovieGridSkeleton count={24} />
               </>
