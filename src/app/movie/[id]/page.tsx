@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { JumpscareTable } from "@/components/jumpscare-table";
@@ -26,6 +27,7 @@ export default function MovieDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [useExtendedTimeFormat, setUseExtendedTimeFormat] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const hasLoadedRef = useRef(false);
 
   // Helper function to format movie duration
@@ -63,6 +65,49 @@ export default function MovieDetailPage() {
 
   const toggleTimeFormat = () => {
     setUseExtendedTimeFormat(!useExtendedTimeFormat);
+  };
+
+  const handleExportSrt = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch(`/api/movie/${movieId}/export`);
+      if (!response.ok) {
+        if (response.status === 429) {
+          toast.error("Too many requests. Please try again later.");
+        } else {
+          toast.error("Failed to export SRT file. Please try again.");
+        }
+        return
+      }
+
+      const disposition = response.headers.get("Content-Disposition");
+      let filename = "jumpscares.srt";
+
+      if (disposition && disposition.indexOf("attachment") !== -1) {
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(disposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, "");
+        }
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success("SRT file has been exported successfully.");
+    } catch (error) {
+      console.error("Error exporting SRT file:", error);
+      toast.error("An unexpected error occurred during export.");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   useEffect(() => {
@@ -121,7 +166,7 @@ export default function MovieDetailPage() {
     return () => {
       abortController.abort();
     };
-  }, [movieId]); // Only re-run if movieId changes
+  }, [movieId]);
 
   if (loading) {
     return (
@@ -179,7 +224,6 @@ export default function MovieDetailPage() {
       <Header />
 
       <main className="flex-1">
-        {/* Add gradient background section */}
         <section className="pb-8 pt-8">
           <div className="container mx-auto px-4">
             {/* Back Button */}
@@ -292,7 +336,6 @@ export default function MovieDetailPage() {
           </div>
         </section>
 
-        {/* Rest of the content with white background */}
         <section className="flex-1 min-h-0">
           <div className="container mx-auto px-4 pb-8">
             {/* Jumpscare Timeline */}
@@ -301,16 +344,14 @@ export default function MovieDetailPage() {
                 <h2 className="text-xl sm:text-2xl font-bold">
                   Jumpscare Timeline
                 </h2>
-                {/* <ComingSoon
-                  size="xs"
-                  position="bottom-right"
-                  badgeColor="bg-main"
-                  tilt={3}
-                > */}
-                <Button variant="neutral" size="sm" disabled>
-                  Export as SRT
+                <Button
+                  variant="neutral"
+                  size="sm"
+                  onClick={handleExportSrt}
+                  disabled={isExporting || jumpscares.length === 0}
+                >
+                  {isExporting ? "Exporting..." : "Export as SRT"}
                 </Button>
-                {/* </ComingSoon> */}
               </div>
 
               <JumpscareTable
