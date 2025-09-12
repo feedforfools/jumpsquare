@@ -40,6 +40,14 @@ export const exportRateLimit = new Ratelimit({
   prefix: "@upstash/ratelimit_jumpsquare_export",
 });
 
+// Extension rate limiter
+export const extensionRateLimit = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.slidingWindow(30, "60 s"), // 30 requests per minute
+  analytics: true,
+  prefix: "@upstash/ratelimit_jumpsquare_extension",
+});
+
 // Define types for the database relations
 interface MovieDirectorRelation {
   v3_directors: {
