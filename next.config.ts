@@ -6,6 +6,27 @@ const nextConfig: NextConfig = {
   // Add security headers
   async headers() {
     return [
+      // Rule for the new extension API endpoint
+      {
+        source: "/api/extension/:path*",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            // TODO: For development '*' is fine.
+            // For production restrict this to Chrome extension's ID, e.g.,
+            // value: "chrome-extension://[YOUR_EXTENSION_ID_HERE]",
+            value: "*",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type",
+          },
+        ],
+      },
       {
         source: "/(.*)",
         headers: [
