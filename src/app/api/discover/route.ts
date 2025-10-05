@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const selectQuery = `*, v3_movie_directors(v3_directors(id, name)), v3_movie_genres(v3_genres(id, name))`;
+    const selectQuery = `*, v3_movie_directors(v3_directors(id, name)), v3_movie_genres(v3_genres(id, name)), v3_movie_translations(iso_639_1, title, iso_3166_1)`;
 
     // Fetch a few different categories in parallel
     const [recentlyAddedRes, highestRatedRes, mostJumpscaresRes] =

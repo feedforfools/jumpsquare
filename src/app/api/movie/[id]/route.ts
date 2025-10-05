@@ -39,7 +39,8 @@ export async function GET(
         `
         *,
         v3_movie_directors(v3_directors(*)),
-        v3_movie_genres(v3_genres(*))
+        v3_movie_genres(v3_genres(*)),
+        v3_movie_translations(iso_639_1, title, iso_3166_1)
       `
       )
       .eq("id", id)

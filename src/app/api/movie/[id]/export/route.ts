@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin, exportRateLimit } from "@/lib/server-utils";
+import {
+  supabaseAdmin,
+  exportRateLimit,
+  getDisplayTitle,
+} from "@/lib/server-utils";
 import { Jumpscare } from "@/types";
 
 const IDEAL_INTRO_START_TIME = 30; // in seconds
@@ -48,17 +52,22 @@ const generateSrtContent = (jumpscares: Jumpscare[]): string => {
     if (sequence === introInsertIndex) {
       // Add the first intro subtitle
       srtContent += `${sequence++}\n`;
-      srtContent += `${formatSrtTime(intro1StartTime)} --> ${formatSrtTime(intro1StartTime + INTRO_SINGLE_SUBTITLE_DURATION)}\n`;
+      srtContent += `${formatSrtTime(intro1StartTime)} --> ${formatSrtTime(
+        intro1StartTime + INTRO_SINGLE_SUBTITLE_DURATION
+      )}\n`;
       srtContent += `${intro1.text}\n\n`;
 
       // Add the second intro subtitle
       srtContent += `${sequence++}\n`;
-      srtContent += `${formatSrtTime(intro2StartTime)} --> ${formatSrtTime(intro2StartTime + INTRO_SINGLE_SUBTITLE_DURATION)}\n`;
+      srtContent += `${formatSrtTime(intro2StartTime)} --> ${formatSrtTime(
+        intro2StartTime + INTRO_SINGLE_SUBTITLE_DURATION
+      )}\n`;
       srtContent += `${intro2.text}\n\n`;
     }
 
     // Add jumpscare warning
-    const totalSeconds = jumpscare.timestamp_minutes * 60 + jumpscare.timestamp_seconds;
+    const totalSeconds =
+      jumpscare.timestamp_minutes * 60 + jumpscare.timestamp_seconds;
     const startTime = totalSeconds - 5;
     const endTime = totalSeconds;
 
@@ -76,7 +85,7 @@ const generateSrtContent = (jumpscares: Jumpscare[]): string => {
         alertText = "Upcoming jumpscare!";
         break;
     }
-      
+
     srtContent += `${sequence++}\n`;
     srtContent += `${formatSrtTime(startTime)} --> ${formatSrtTime(endTime)}\n`;
     srtContent += `${alertText}\n\n`;
@@ -86,44 +95,63 @@ const generateSrtContent = (jumpscares: Jumpscare[]): string => {
   if (introInsertIndex >= sequence) {
     // Add the first intro subtitle
     srtContent += `${sequence++}\n`;
-    srtContent += `${formatSrtTime(intro1StartTime)} --> ${formatSrtTime(intro1StartTime + INTRO_SINGLE_SUBTITLE_DURATION)}\n`;
+    srtContent += `${formatSrtTime(intro1StartTime)} --> ${formatSrtTime(
+      intro1StartTime + INTRO_SINGLE_SUBTITLE_DURATION
+    )}\n`;
     srtContent += `${intro1.text}\n\n`;
 
     // Add the second intro subtitle
     srtContent += `${sequence++}\n`;
-    srtContent += `${formatSrtTime(intro2StartTime)} --> ${formatSrtTime(intro2StartTime + INTRO_SINGLE_SUBTITLE_DURATION)}\n`;
+    srtContent += `${formatSrtTime(intro2StartTime)} --> ${formatSrtTime(
+      intro2StartTime + INTRO_SINGLE_SUBTITLE_DURATION
+    )}\n`;
     srtContent += `${intro2.text}\n\n`;
   }
 
   return srtContent;
 };
 
-const getBestIntroductionStartingTimestamp = (jumpscares: Jumpscare[]): { index: number; seconds: number } => {
-    const firstJumpscareTimeInSeconds = jumpscares[0].timestamp_minutes * 60 + jumpscares[0].timestamp_seconds;
-    if (firstJumpscareTimeInSeconds > IDEAL_INTRO_START_TIME + INTRO_DURATION) {
-        return { index: 1, seconds: IDEAL_INTRO_START_TIME };
+const getBestIntroductionStartingTimestamp = (
+  jumpscares: Jumpscare[]
+): { index: number; seconds: number } => {
+  const firstJumpscareTimeInSeconds =
+    jumpscares[0].timestamp_minutes * 60 + jumpscares[0].timestamp_seconds;
+  if (firstJumpscareTimeInSeconds > IDEAL_INTRO_START_TIME + INTRO_DURATION) {
+    return { index: 1, seconds: IDEAL_INTRO_START_TIME };
+  }
+
+  const adjustedStartTime = firstJumpscareTimeInSeconds - INTRO_DURATION - 5; // 5 seconds before the first jumpscare warning
+  if (adjustedStartTime >= 0) {
+    return { index: 1, seconds: adjustedStartTime };
+  }
+
+  // Search for a long enough gap between jumpscares, at the beginning of the movie, that can fit the intro sequence
+  for (let i = 0; i < jumpscares.length - 1; i++) {
+    const currentJumpscareTime =
+      jumpscares[i].timestamp_minutes * 60 + jumpscares[i].timestamp_seconds;
+    const nextJumpscareTime =
+      jumpscares[i + 1].timestamp_minutes * 60 +
+      jumpscares[i + 1].timestamp_seconds;
+    const gap = nextJumpscareTime - currentJumpscareTime;
+
+    if (gap >= 3 * INTRO_DURATION) {
+      // 3 times the intro duration to ensure enough space
+      return {
+        index: i + 1 + 1,
+        seconds: currentJumpscareTime + 1.5 * gap - INTRO_DURATION / 2,
+      }; // Center the intro in the gap
     }
+  }
 
-    const adjustedStartTime = firstJumpscareTimeInSeconds - INTRO_DURATION - 5; // 5 seconds before the first jumpscare warning
-    if (adjustedStartTime >= 0) {
-        return { index: 1, seconds: adjustedStartTime };
-    }
-
-    // Search for a long enough gap between jumpscares, at the beginning of the movie, that can fit the intro sequence
-    for (let i = 0; i < jumpscares.length - 1; i++) {
-        const currentJumpscareTime = jumpscares[i].timestamp_minutes * 60 + jumpscares[i].timestamp_seconds;
-        const nextJumpscareTime = jumpscares[i + 1].timestamp_minutes * 60 + jumpscares[i + 1].timestamp_seconds;
-        const gap = nextJumpscareTime - currentJumpscareTime;
-
-        if (gap >= 3 * INTRO_DURATION) { // 3 times the intro duration to ensure enough space
-            return { index: i + 1 + 1, seconds: currentJumpscareTime + 1.5 * gap - INTRO_DURATION / 2 }; // Center the intro in the gap
-        }
-    }
-
-    const lastIndex = jumpscares.length - 1;
-    return { index: lastIndex + 1 + 1, seconds: jumpscares[lastIndex].timestamp_minutes * 60 + jumpscares[lastIndex].timestamp_seconds + 10 }; // After the last jumpscare (+10s buffer)
-}
-
+  const lastIndex = jumpscares.length - 1;
+  return {
+    index: lastIndex + 1 + 1,
+    seconds:
+      jumpscares[lastIndex].timestamp_minutes * 60 +
+      jumpscares[lastIndex].timestamp_seconds +
+      10,
+  }; // After the last jumpscare (+10s buffer)
+};
 
 export async function GET(
   request: NextRequest,
@@ -158,20 +186,19 @@ export async function GET(
     // Fetch the movie to get the title for the filename
     const { data: movieData, error: movieError } = await supabaseAdmin
       .from("v3_movies")
-      .select("title, year")
+      .select("*, v3_movie_translations(iso_639_1, title, iso_3166_1)")
       .eq("id", id)
       .single();
 
     if (movieError) {
-        if (movieError.code === 'PGRST116') {
-            return new NextResponse(JSON.stringify({ error: "Movie not found" }), {
-                status: 404,
-                headers: rateLimitHeaders,
-            });
-        }
-        throw movieError;
+      if (movieError.code === "PGRST116") {
+        return new NextResponse(JSON.stringify({ error: "Movie not found" }), {
+          status: 404,
+          headers: rateLimitHeaders,
+        });
+      }
+      throw movieError;
     }
-
 
     // Fetch jumpscares for the movie
     const { data: jumpscares, error: jumpscaresError } = await supabaseAdmin
@@ -191,14 +218,17 @@ export async function GET(
     }
 
     const srtContent = generateSrtContent(jumpscares);
-    
+
+    // Get display title (English if available, otherwise original)
+    const displayTitle = getDisplayTitle(movieData);
+
     // Sanitize the movie title for filename use
-    const sanitizedTitle = movieData.title
+    const sanitizedTitle = displayTitle
       .replace(/[:\\/?"<>|*]/g, "") // Remove characters not allowed in filenames
       .replace(/\s+/g, "-") // Replace spaces with dashes
       .replace(/--+/g, "-") // Replace multiple consecutive dashes with single dash
       .replace(/^-|-$/g, ""); // Remove leading/trailing dashes
-    
+
     const fileName = `${sanitizedTitle}_${movieData.year}_heresthejump.srt`;
 
     // Set headers to trigger file download
@@ -207,10 +237,12 @@ export async function GET(
     headers.set("Content-Disposition", `attachment; filename="${fileName}"`);
 
     return new NextResponse(srtContent, { status: 200, headers });
-
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "An unexpected error occurred";
-    return NextResponse.json({ error: errorMessage }, { status: 500, headers: rateLimitHeaders });
+    return NextResponse.json(
+      { error: errorMessage },
+      { status: 500, headers: rateLimitHeaders }
+    );
   }
 }

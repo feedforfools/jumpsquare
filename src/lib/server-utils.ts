@@ -66,14 +66,23 @@ interface MovieWithRelations {
   description: string;
   v3_movie_directors?: MovieDirectorRelation[];
   v3_movie_genres?: MovieGenreRelation[];
+  v3_movie_translations?: {
+    iso_639_1: string;
+    title: string;
+    iso_3166_1?: string;
+  }[];
 }
 
 // Helper function to transform movie data for card displays
 export const transformMovieForCard = (movie: MovieWithRelations | null) => {
   if (!movie) return null;
+
+  // Get English title if available or use original title if not
+  const displayTitle = getDisplayTitle(movie);
+
   return {
     id: movie.id,
-    title: movie.title,
+    title: displayTitle,
     year: movie.year,
     rating: movie.rating,
     jumpscare_count: movie.jumpscare_count,
@@ -88,4 +97,21 @@ export const transformMovieForCard = (movie: MovieWithRelations | null) => {
         ?.slice(0, 2)
         .map((mg: MovieGenreRelation) => mg.v3_genres) || [],
   };
+};
+
+export const getDisplayTitle = (movie: MovieWithRelations): string => {
+  if (
+    movie.v3_movie_translations &&
+    Array.isArray(movie.v3_movie_translations)
+  ) {
+    const englishTranslation = movie.v3_movie_translations.find(
+      (translation) => translation.iso_639_1 === "en"
+    );
+
+    if (englishTranslation && englishTranslation.title) {
+      return englishTranslation.title;
+    }
+  }
+
+  return movie.title;
 };

@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     const { data, error, count } = await supabaseAdmin
       .from("v3_movies")
       .select(
-        `*, v3_movie_directors(v3_directors(id, name)), v3_movie_genres(v3_genres(id, name))`,
+        `*, v3_movie_directors(v3_directors(id, name)), v3_movie_genres(v3_genres(id, name)), v3_movie_translations(iso_639_1, title, iso_3166_1)`,
         { count: "exact" }
       )
       .textSearch("title", `'${query}'`)
