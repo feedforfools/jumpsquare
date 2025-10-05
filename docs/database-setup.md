@@ -28,7 +28,7 @@ CREATE INDEX IF NOT EXISTS idx_v3_movie_translations_title_fts ON v3_movie_trans
 ## Custom RPC Functions
 
 ### search_movies Function
-This function provides hybrid search capabilities across both original and translated movie titles.
+This function provides hybrid search capabilities across both original and translated movie titles for the main search API.
 
 **Features:**
 - Full-text search with relevance ranking (priority 1 & 3)
@@ -163,7 +163,154 @@ END;
 $$;
 ```
 
+### find_movie_exact Function
+Optimized function for exact title matching, designed for browser extension API usage.
+
+**Features:**
+- Single efficient query across both original and translated titles
+- Smart year tolerance (±1 year) instead of exact matching
+- Prioritized matching: exact original > exact translation > case-insensitive
+- Returns minimal movie data for performance
+
+**Year Logic:**
+- If year provided: only matches within ±1 year tolerance
+- Multiple matches: selects closest year to target
+- Single match: validates year is within tolerance range
+
+```sql
+CREATE OR REPLACE FUNCTION find_movie_exact(
+  search_title TEXT,
+  search_year INTEGER DEFAULT NULL
+)
+RETURNS TABLE (
+  id UUID,
+  title TEXT,
+  year INTEGER,
+  match_type TEXT,
+  year_distance INTEGER
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  RETURN QUERY
+  WITH all_matches AS (
+    -- Get all exact title matches from both original and translated titles
+    SELECT 
+      m.id,
+      m.title,
+      m.year,
+      'original_exact' as match_type,
+      CASE 
+        WHEN search_year IS NULL THEN 0
+        ELSE ABS(m.year - search_year)
+      END as year_distance
+    FROM v3_movies m
+    WHERE m.title = search_title
+    
+    UNION ALL
+    
+    SELECT 
+      m.id,
+      m.title,
+      m.year,
+      'translation_exact' as match_type,
+      CASE 
+        WHEN search_year IS NULL THEN 0
+        ELSE ABS(m.year - search_year)
+      END as year_distance
+    FROM v3_movies m
+    JOIN v3_movie_translations mt ON mt.movie_id = m.id
+    WHERE mt.title = search_title
+    
+    UNION ALL
+    
+    -- Fallback: case-insensitive matches
+    SELECT 
+      m.id,
+      m.title,
+      m.year,
+      'original_ilike' as match_type,
+      CASE 
+        WHEN search_year IS NULL THEN 0
+        ELSE ABS(m.year - search_year)
+      END as year_distance
+    FROM v3_movies m
+    WHERE m.title ILIKE search_title
+    AND NOT EXISTS (
+      SELECT 1 FROM v3_movies m2 WHERE m2.title = search_title AND m2.id = m.id
+    )
+    
+    UNION ALL
+    
+    SELECT 
+      m.id,
+      m.title,
+      m.year,
+      'translation_ilike' as match_type,
+      CASE 
+        WHEN search_year IS NULL THEN 0
+        ELSE ABS(m.year - search_year)
+      END as year_distance
+    FROM v3_movies m
+    JOIN v3_movie_translations mt ON mt.movie_id = m.id
+    WHERE mt.title ILIKE search_title
+    AND NOT EXISTS (
+      SELECT 1 FROM v3_movie_translations mt2 WHERE mt2.title = search_title AND mt2.movie_id = m.id
+    )
+  ),
+  filtered_matches AS (
+    SELECT DISTINCT ON (am.id) 
+      am.id,
+      am.title,
+      am.year,
+      am.match_type,
+      am.year_distance
+    FROM all_matches am
+    WHERE 
+      -- Apply year filter: within 1 year tolerance
+      search_year IS NULL OR am.year_distance <= 1
+    ORDER BY 
+      am.id,
+      -- Prioritize match types
+      CASE am.match_type
+        WHEN 'original_exact' THEN 1
+        WHEN 'translation_exact' THEN 2
+        WHEN 'original_ilike' THEN 3
+        WHEN 'translation_ilike' THEN 4
+      END,
+      am.year_distance
+  )
+  SELECT 
+    fm.id,
+    fm.title,
+    fm.year,
+    fm.match_type,
+    fm.year_distance
+  FROM filtered_matches fm
+  ORDER BY 
+    -- First prioritize by match type quality
+    CASE fm.match_type
+      WHEN 'original_exact' THEN 1
+      WHEN 'translation_exact' THEN 2
+      WHEN 'original_ilike' THEN 3
+      WHEN 'translation_ilike' THEN 4
+    END,
+    -- Then by year closeness
+    fm.year_distance,
+    -- Finally by year (newer first as tiebreaker)
+    fm.year DESC
+  LIMIT 1;
+END;
+$$;
+```
+
 ## Search Logic Implementation Notes
+
+### Extension API Year Tolerance
+The extension API uses a ±1 year tolerance for matching movies:
+- Movie detected as 2001 → accepts matches from 2000, 2001, 2002
+- Multiple matches within tolerance → selects closest year
+- Outside tolerance → match rejected
 
 ### Title Display Logic
 The application always displays English titles when available, falling back to original titles:
@@ -174,17 +321,16 @@ The application always displays English titles when available, falling back to o
 
 This logic is implemented in `src/lib/server-utils.ts` in the `getDisplayTitle()` function.
 
-### Search Priority Order
-1. **Priority 1**: Full-text search match in original titles
-2. **Priority 2**: ILIKE partial match in original titles (fallback)
-3. **Priority 3**: Full-text search match in translated titles
-4. **Priority 4**: ILIKE partial match in translated titles (fallback)
+### Match Priority Order (Extension)
+1. **Priority 1**: Exact match in original titles
+2. **Priority 2**: Exact match in translated titles
+3. **Priority 3**: Case-insensitive match in original titles
+4. **Priority 4**: Case-insensitive match in translated titles
 
 ### Performance Considerations
-- The `pg_trgm` extension enables fast partial matching and typo tolerance
-- GIN indexes provide excellent performance for both trigram and full-text searches
-- The hybrid approach ensures comprehensive coverage while maintaining speed
-- Relevance ranking via `ts_rank()` improves result quality
+- Single query approach is much more efficient than multiple sequential queries
+- Year filtering happens in SQL, reducing data transfer
+- DISTINCT ON prevents duplicate results while preserving priority order
 
 ## Migration Notes for Other Tech Stacks
 
@@ -197,5 +343,6 @@ If migrating to a different database/framework:
 
 ## Related Files
 - `/src/app/api/search/route.ts` - Main search API endpoint
+- `/src/app/api/extension/jumpscares/route.ts` - Browser extension API endpoint
 - `/src/lib/server-utils.ts` - Title display logic and transformation functions
 - `/src/app/api/movie/[id]/export/route.ts` - Uses display title logic for SRT filenames

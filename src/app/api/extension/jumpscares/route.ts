@@ -32,33 +32,32 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Build the query to find the best match
-    let queryBuilder = supabaseAdmin
-      .from("v3_movies")
-      .select("id, title")
-      .textSearch("title", `'${title}'`);
+    // Use the robust single-query RPC function
+    const { data: movies, error: searchError } = await supabaseAdmin.rpc(
+      "find_movie_exact",
+      {
+        search_title: title,
+        search_year: year ? parseInt(year) : null,
+      }
+    );
 
-    if (year) {
-      queryBuilder = queryBuilder.eq("year", parseInt(year));
+    if (searchError) {
+      console.error("Error searching movies:", searchError);
+      return NextResponse.json(
+        { error: "Search failed" },
+        { status: 500, headers }
+      );
     }
 
-    // We only want the single best match
-    const { data: movie, error: movieError } = await queryBuilder
-      .limit(1)
-      .single();
-
-    if (movieError || !movie) {
-      // PGRST116 is the code for "No rows found"
-      if (movieError && movieError.code !== "PGRST116") {
-        console.error("Error finding movie:", movieError);
-      }
+    const movie = movies?.[0];
+    if (!movie) {
       return NextResponse.json(
         { error: "Movie not found" },
         { status: 404, headers }
       );
     }
 
-    // If a match is found, fetch its jumpscares
+    // Fetch jumpscares for the found movie
     const { data: jumpscares, error: jumpscaresError } = await supabaseAdmin
       .from("v3_jumpscares")
       .select("id, timestamp_minutes, timestamp_seconds, description, category")
@@ -67,22 +66,32 @@ export async function GET(request: NextRequest) {
       .order("timestamp_seconds", { ascending: true });
 
     if (jumpscaresError) {
-      throw new Error("Could not fetch jumpscares for the movie");
+      console.error("Error fetching jumpscares:", jumpscaresError);
+      return NextResponse.json(
+        { error: "Error fetching jumpscares" },
+        { status: 500, headers }
+      );
     }
 
-    const responsePayload = {
-      id: movie.id,
-      title: movie.title,
-      jumpscares: jumpscares || [],
-    };
-
-    return NextResponse.json(responsePayload, { headers });
+    return NextResponse.json(
+      {
+        movie: {
+          id: movie.id,
+          title: movie.title,
+          year: movie.year,
+        },
+        jumpscares: jumpscares || [],
+        debug: {
+          match_type: movie.match_type,
+          year_distance: movie.year_distance,
+        },
+      },
+      { headers }
+    );
   } catch (error: unknown) {
+    console.error("Extension API error:", error);
     const errorMessage =
       error instanceof Error ? error.message : "An unexpected error occurred";
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500, headers }
-    );
+    return NextResponse.json({ error: errorMessage }, { status: 500, headers });
   }
 }
