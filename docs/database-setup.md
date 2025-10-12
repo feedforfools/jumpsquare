@@ -304,6 +304,46 @@ END;
 $$;
 ```
 
+## Extension Telemetry (Anonymous Install + Query Logs)
+
+These tables back the browser extension usage tracking implemented in
+`src/app/api/extension/jumpscares/route.ts`.
+
+```sql
+-- Extension install registry (anonymous users)
+create table if not exists public.v3_extension_installations (
+  id bigserial primary key,
+  instance_id text not null unique,
+  first_seen_at timestamptz not null default now(),
+  last_seen_at timestamptz not null default now(),
+  total_queries integer not null default 0
+);
+
+-- Per-request logs for market/usage insights
+create table if not exists public.v3_extension_query_logs (
+  id bigserial primary key,
+  installation_id bigint not null references public.v3_extension_installations(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  query_params jsonb not null,
+  response_summary jsonb not null,
+  status_code integer not null
+);
+
+-- Indexes
+create index if not exists idx_v3_ext_logs_installation_id on public.v3_extension_query_logs (installation_id);
+create index if not exists idx_v3_ext_logs_created_at on public.v3_extension_query_logs (created_at desc);
+create index if not exists idx_v3_ext_logs_status_code on public.v3_extension_query_logs (status_code);
+
+-- Optional JSONB GIN indexes
+create index if not exists idx_v3_ext_logs_query_params_gin on public.v3_extension_query_logs using gin (query_params);
+create index if not exists idx_v3_ext_logs_response_summary_gin on public.v3_extension_query_logs using gin (response_summary);
+```
+
+Notes:
+- instance_id must be a stable anonymous ID sent by the extension in the X-Extension-Instance-ID header.
+- The API increments total_queries and updates last_seen_at on every request, and writes a row to v3_extension_query_logs for all outcomes (200/400/404/429/500).
+- Access uses the service role via [`supabaseAdmin`](src/lib/server-utils.ts); add RLS only if you expose these tables to non-admin clients.
+
 ## Search Logic Implementation Notes
 
 ### Extension API Year Tolerance

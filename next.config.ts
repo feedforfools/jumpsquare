@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Access-Control-Allow-Headers",
-            value: "Content-Type",
+            value: "Content-Type, X-Extension-Instance-Id, X-Real-IP",
           },
         ],
       },
