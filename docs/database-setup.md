@@ -7,6 +7,9 @@ This document contains all the PostgreSQL/Supabase database setup commands requi
 ```sql
 -- Enable pg_trgm extension for better partial matching and typo tolerance
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+-- Enable unaccent extension for removing accents from characters
+CREATE EXTENSION IF NOT EXISTS unaccent;
 ```
 
 ## Performance Indexes
@@ -169,7 +172,8 @@ Optimized function for exact title matching, designed for browser extension API 
 **Features:**
 - Single efficient query across both original and translated titles
 - Smart year tolerance (±1 year) instead of exact matching
-- Prioritized matching: exact original > exact translation > case-insensitive
+- **Normalized title matching**: Handles special characters, accents, and punctuation
+- Prioritized matching: exact normalized > similarity fallback
 - Returns minimal movie data for performance
 
 **Year Logic:**
@@ -177,7 +181,54 @@ Optimized function for exact title matching, designed for browser extension API 
 - Multiple matches: selects closest year to target
 - Single match: validates year is within tolerance range
 
+**Normalization:**
+- Removes accents (café → cafe)
+- Converts superscript numbers ([REC]² → rec2, [REC] 2 → rec2)
+- Removes special characters and spaces ([•REC]³ - La genesi → rec3lagenesi)
+- Converts to lowercase
+- **Note**: unaccent extension handles accented letters but NOT superscript numbers
+
 ```sql
+-- Helper function to normalize text for matching
+CREATE OR REPLACE FUNCTION normalize_title(text_input TEXT)
+RETURNS TEXT
+LANGUAGE plpgsql
+IMMUTABLE
+AS $$
+BEGIN
+  RETURN lower(
+    regexp_replace(
+      unaccent(
+        -- Replace superscript numbers with regular numbers BEFORE unaccent
+        -- Note: unaccent doesn't handle superscripts, so we do it manually
+        regexp_replace(
+          regexp_replace(
+            regexp_replace(
+              regexp_replace(
+                regexp_replace(
+                  regexp_replace(
+                    regexp_replace(
+                      regexp_replace(
+                        regexp_replace(
+                          regexp_replace(text_input, '⁰', '0', 'g'),
+                        '¹', '1', 'g'),
+                      '²', '2', 'g'),
+                    '³', '3', 'g'),
+                  '⁴', '4', 'g'),
+                '⁵', '5', 'g'),
+              '⁶', '6', 'g'),
+            '⁷', '7', 'g'),
+          '⁸', '8', 'g'),
+        '⁹', '9', 'g')
+      ),
+      -- Remove ALL non-alphanumeric characters (including spaces and special chars)
+      '[^a-zA-Z0-9]', '', 'g'
+    )
+  );
+END;
+$$;
+
+-- Updated find_movie_exact function with normalization
 CREATE OR REPLACE FUNCTION find_movie_exact(
   search_title TEXT,
   search_year INTEGER DEFAULT NULL
@@ -191,10 +242,15 @@ RETURNS TABLE (
 ) 
 LANGUAGE plpgsql
 AS $$
+DECLARE
+  normalized_search TEXT;
 BEGIN
+  -- Normalize the search title once
+  normalized_search := normalize_title(search_title);
+  
   RETURN QUERY
   WITH all_matches AS (
-    -- Get all exact title matches from both original and translated titles
+    -- Exact match on normalized original titles
     SELECT 
       m.id,
       m.title,
@@ -205,10 +261,11 @@ BEGIN
         ELSE ABS(m.year - search_year)
       END as year_distance
     FROM v3_movies m
-    WHERE m.title = search_title
+    WHERE normalize_title(m.title) = normalized_search
     
     UNION ALL
     
+    -- Exact match on normalized translated titles
     SELECT 
       m.id,
       m.title,
@@ -220,43 +277,40 @@ BEGIN
       END as year_distance
     FROM v3_movies m
     JOIN v3_movie_translations mt ON mt.movie_id = m.id
-    WHERE mt.title = search_title
+    WHERE normalize_title(mt.title) = normalized_search
     
     UNION ALL
     
-    -- Fallback: case-insensitive matches
+    -- Trigram similarity fallback for typos/variants (original titles)
     SELECT 
       m.id,
       m.title,
       m.year,
-      'original_ilike' as match_type,
+      'original_similarity' as match_type,
       CASE 
         WHEN search_year IS NULL THEN 0
         ELSE ABS(m.year - search_year)
       END as year_distance
     FROM v3_movies m
-    WHERE m.title ILIKE search_title
-    AND NOT EXISTS (
-      SELECT 1 FROM v3_movies m2 WHERE m2.title = search_title AND m2.id = m.id
-    )
+    WHERE similarity(normalize_title(m.title), normalized_search) > 0.75
+    AND normalize_title(m.title) != normalized_search
     
     UNION ALL
     
+    -- Trigram similarity fallback for typos/variants (translated titles)
     SELECT 
       m.id,
       m.title,
       m.year,
-      'translation_ilike' as match_type,
+      'translation_similarity' as match_type,
       CASE 
         WHEN search_year IS NULL THEN 0
         ELSE ABS(m.year - search_year)
       END as year_distance
     FROM v3_movies m
     JOIN v3_movie_translations mt ON mt.movie_id = m.id
-    WHERE mt.title ILIKE search_title
-    AND NOT EXISTS (
-      SELECT 1 FROM v3_movie_translations mt2 WHERE mt2.title = search_title AND mt2.movie_id = m.id
-    )
+    WHERE similarity(normalize_title(mt.title), normalized_search) > 0.75
+    AND normalize_title(mt.title) != normalized_search
   ),
   filtered_matches AS (
     SELECT DISTINCT ON (am.id) 
@@ -267,16 +321,14 @@ BEGIN
       am.year_distance
     FROM all_matches am
     WHERE 
-      -- Apply year filter: within 1 year tolerance
       search_year IS NULL OR am.year_distance <= 1
     ORDER BY 
       am.id,
-      -- Prioritize match types
       CASE am.match_type
         WHEN 'original_exact' THEN 1
         WHEN 'translation_exact' THEN 2
-        WHEN 'original_ilike' THEN 3
-        WHEN 'translation_ilike' THEN 4
+        WHEN 'original_similarity' THEN 3
+        WHEN 'translation_similarity' THEN 4
       END,
       am.year_distance
   )
@@ -288,16 +340,13 @@ BEGIN
     fm.year_distance
   FROM filtered_matches fm
   ORDER BY 
-    -- First prioritize by match type quality
     CASE fm.match_type
       WHEN 'original_exact' THEN 1
       WHEN 'translation_exact' THEN 2
-      WHEN 'original_ilike' THEN 3
-      WHEN 'translation_ilike' THEN 4
+      WHEN 'original_similarity' THEN 3
+      WHEN 'translation_similarity' THEN 4
     END,
-    -- Then by year closeness
     fm.year_distance,
-    -- Finally by year (newer first as tiebreaker)
     fm.year DESC
   LIMIT 1;
 END;
@@ -362,10 +411,19 @@ The application always displays English titles when available, falling back to o
 This logic is implemented in `src/lib/server-utils.ts` in the `getDisplayTitle()` function.
 
 ### Match Priority Order (Extension)
-1. **Priority 1**: Exact match in original titles
-2. **Priority 2**: Exact match in translated titles
-3. **Priority 3**: Case-insensitive match in original titles
-4. **Priority 4**: Case-insensitive match in translated titles
+1. **Priority 1**: Exact match on normalized original titles
+2. **Priority 2**: Exact match on normalized translated titles
+3. **Priority 3**: Similarity match (>0.75 threshold) on normalized original titles
+4. **Priority 4**: Similarity match (>0.75 threshold) on normalized translated titles
+
+**Normalization Examples:**
+- `[REC]` → `rec`
+- `[REC]²` → `rec2`
+- `[REC] 2` → `rec2`
+- `[REC] 3` → `rec3`
+- `[•REC]³ - La genesi` → `rec3lagenesi`
+- `Rec 3 - La Genesi` → `rec3lagenesi`
+- All variations of REC sequels normalize consistently ✅
 
 ### Performance Considerations
 - Single query approach is much more efficient than multiple sequential queries
