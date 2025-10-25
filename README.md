@@ -1,6 +1,6 @@
-# Here's the Jump!
+# Jumpsquare
 
-This is the codebase for "Here's the Jump!", a Next.js application that serves as the ultimate database of movie jumpscares. It allows users to watch horror movies with confidence by knowing when the scares are coming, or to avoid them entirely.
+This is the codebase for "Jumpsquare", a Next.js application that serves as the ultimate database of movie jumpscares. It allows users to watch horror movies with confidence by knowing when the scares are coming, or to avoid them entirely.
 
 The project includes a full-featured website, a data-rich API, and a backend designed for a companion browser extension.
 
