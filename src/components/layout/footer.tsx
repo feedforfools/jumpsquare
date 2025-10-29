@@ -8,6 +8,12 @@ export function Footer() {
           <p>© 2025 Here&apos;s the Jump! All rights reserved.</p>
           <div className="flex space-x-4 mt-2 sm:mt-0">
             <Link
+              href="/privacy"
+              className="hover:text-brand-red transition-colors underline"
+            >
+              Privacy Policy
+            </Link>
+            <Link
               href="/terms"
               className="hover:text-brand-red transition-colors underline"
             >

@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Shield, AlertTriangle, Scale, Database } from "lucide-react";
+import { Scale } from "lucide-react";
 import Link from "next/link";
 
 export default function TermsOfServicePage() {
@@ -50,54 +50,8 @@ export default function TermsOfServicePage() {
             </div>
           </div>
 
-          {/* Quick Notice Cards */}
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <Card className="border-brand-red-border bg-brand-red-light">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center text-brand-red-hover text-sm">
-                  <AlertTriangle className="h-4 w-4 mr-2" />
-                  No Scraping
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-xs text-brand-red-hover">
-                  Automated data collection, scraping, or harvesting is strictly
-                  prohibited.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-blue-200 bg-jumpscare-low-bg">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center text-jumpscare-low text-sm">
-                  <Database className="h-4 w-4 mr-2" />
-                  Database Rights
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-xs text-jumpscare-low">
-                  Our compiled database is protected intellectual property.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-green-200 bg-jumpscare-mild-bg">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center text-jumpscare-mild text-sm">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Personal Use
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-xs text-jumpscare-mild">
-                  Content is provided for personal, non-commercial use only.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
           {/* Main Terms Content */}
-          <Card className="mb-8 bg-app-surface">
+          <Card className="shadow-shadow bg-secondary-background">
             <CardContent className="p-8">
               <div className="prose prose-gray max-w-none">
                 <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
@@ -145,7 +99,7 @@ export default function TermsOfServicePage() {
                   The following elements are our exclusive intellectual
                   property:
                 </p>
-                <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-1">
+                <ul className="list-disc ml-6 mb-4 text-gray-700 space-y-1">
                   <li>Precise timestamp measurements and formatting system</li>
                   <li>Intensity rating methodology and scale (1-10)</li>
                   <li>Categorization system (major, minor, false alarm)</li>
@@ -170,7 +124,7 @@ export default function TermsOfServicePage() {
                 <p className="mb-4 text-gray-700 leading-relaxed">
                   You are <strong>strictly prohibited</strong> from:
                 </p>
-                <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-1">
+                <ul className="list-disc ml-6 mb-4 text-gray-700 space-y-1">
                   <li>
                     Using bots, scrapers, crawlers, or automated tools to access
                     our content
@@ -197,7 +151,7 @@ export default function TermsOfServicePage() {
                 <p className="mb-4 text-gray-700 leading-relaxed">
                   Our content may not be used for:
                 </p>
-                <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-1">
+                <ul className="list-disc ml-6 mb-4 text-gray-700 space-y-1">
                   <li>Creating competing websites or applications</li>
                   <li>Selling, licensing, or redistributing our data</li>
                   <li>Training AI models or machine learning systems</li>
@@ -211,7 +165,7 @@ export default function TermsOfServicePage() {
                 <p className="mb-4 text-gray-700 leading-relaxed">
                   You must not:
                 </p>
-                <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-1">
+                <ul className="list-disc ml-6 mb-4 text-gray-700 space-y-1">
                   <li>
                     Make excessive requests that could harm our infrastructure
                   </li>
@@ -327,6 +281,15 @@ export default function TermsOfServicePage() {
                   </Link>
                   .
                 </p>
+
+                <Separator className="my-8" />
+
+                <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
+                  <span className="bg-brand-red-lighter w-8 h-8 rounded-full flex items-center justify-center text-brand-red text-sm font-bold mr-3">
+                    9
+                  </span>
+                  Academic and Commercial Licensing
+                </h2>
                 <p className="text-gray-700 leading-relaxed">
                   For academic research or legitimate commercial licensing, we
                   may consider special arrangements on a case-by-case basis.
@@ -336,7 +299,7 @@ export default function TermsOfServicePage() {
           </Card>
 
           {/* Footer Actions */}
-          <div className="text-center">
+          <div className="text-center mt-8">
             <Link href="/">
               <Button variant="default">
                 I Understand - Back to Here&apos;s the Jump
