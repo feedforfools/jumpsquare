@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Privacy Policy - Here's the Jump",
@@ -206,6 +207,15 @@ export default function PrivacyPolicyPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Footer Actions */}
+          <div className="text-center mt-8">
+            <Link href="/">
+              <Button variant="default">
+                I Understand - Back to Here&apos;s the Jump
+              </Button>
+            </Link>
+          </div>
         </div>
       </main>
 
